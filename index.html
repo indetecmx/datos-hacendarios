@@ -1,163 +1,225 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>INDETEC · Datos Hacendarios (Master)</title>
-
-  <!-- Google Tag Manager -->
-  <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
-      var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),
-          dl=l!='dataLayer'?'&l='+l:'';
-      j.async=true;
-      j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-      f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-P6SC6N4M'); /* ← tu ID GTM real */
-  </script>
-  <!-- End Google Tag Manager -->
-
-  <style>
-    :root { color-scheme: light dark; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f7f7f7;
-    }
-    .wrap {
-      width: 100%;
-      height: 100%;
-      max-width: 1800px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-rows: auto 1fr;
-    }
-    header {
-      padding: 8px 14px;
-      font: 600 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color: #222;
-    }
-    iframe {
-      width: 100%;
-      height: calc(100vh - 42px);
-      border: none;
-      background: #fff;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INDETEC · Datos Hacendarios · Reportes PBI</title>
+<meta name="color-scheme" content="light dark">
+<style>
+  :root{
+    --bg:#fff; --fg:#111; --muted:#667; --card:#f6f7fb; --border:#e6e8ef; --accent:#2f6fed;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b0d12; --fg:#eaeef8; --muted:#98a0b3; --card:#121621; --border:#22283a; --accent:#6aa7ff;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:10}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  h1{font-size:1.2rem;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:.92rem;margin:0}
+  .toolbar{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-top:12px}
+  input[type=search]{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--fg)}
+  .btn{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--fg);cursor:pointer}
+  .btn[aria-pressed=true]{border-color:var(--accent);color:var(--accent)}
+  main{padding:18px 0}
+  .group{margin:18px 0}
+  .ghead{display:flex;align-items:center;gap:10px;margin:0 0 8px}
+  .ghead h2{font-size:1rem;margin:0}
+  .count{color:var(--muted);font-size:.85rem}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media (max-width:920px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:640px){ .grid{grid-template-columns:1fr} }
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .title{margin:0;font-size:1rem}
+  .meta{display:flex;gap:8px;flex-wrap:wrap}
+  .tag{font-size:.75rem;color:var(--muted);padding:2px 8px;border:1px solid var(--border);border-radius:999px}
+  .id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.76rem;color:var(--muted)}
+  .actions{display:flex;gap:8px;margin-top:auto}
+  .a{flex:1;text-align:center;text-decoration:none;border:1px solid var(--border);border-radius:10px;padding:9px}
+  .a.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .empty{padding:24px;color:var(--muted)}
+  footer{border-top:1px solid var(--border)}
+  .hint{color:var(--muted);font-size:.85rem}
+</style>
 </head>
-
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P6SC6N4M" height="0" width="0"
-      style="display:none;visibility:hidden"></iframe>
-  </noscript>
-  <!-- End Google Tag Manager (noscript) -->
-
+<header>
   <div class="wrap">
-    <header>INDETEC · Datos Hacendarios — Bienvenidos </header>
-
-    <!-- === IFRAME DE POWER BI (Archivo Maestro) === -->
-    <iframe id="pbi-master"
-      title="Archivo Maestro - INDETEC"
-      data-pbi-name="Archivo Maestro"
-      src="https://app.powerbi.com/view?r=eyJrIjoiOTJhOWY0ODMtOWE2Zi00ODk0LTgzODgtMzVhMGEzZTMyOTIzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9"
-      allowfullscreen="true">
-    </iframe>
+    <h1>Datos Hacendarios · Reportes Power BI</h1>
+    <p class="sub">Enlaces con dominio GitHub → registro server-side (Apps Script) → redirección a Power BI.</p>
+    <div class="toolbar" role="region" aria-label="Herramientas">
+      <input id="q" type="search" placeholder="Buscar por nombre o ID… (ej. ‘EFIPEM’, ‘predial’, ‘pe_2000_2023’)" autocomplete="off" aria-label="Buscar">
+      <button id="toggleGroup" class="btn" aria-pressed="true" title="Agrupar por categoría">Agrupar</button>
+      <button id="toggleIds" class="btn" aria-pressed="false" title="Mostrar IDs debajo del título">IDs</button>
+    </div>
   </div>
+</header>
 
-<!-- === CONTADOR: impresión, vista a 10s y session_load del iframe maestro === -->
+<main>
+  <div class="wrap" id="app" aria-live="polite"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="hint">Tip: usa el botón “Copiar enlace” para pegar en correo, WhatsApp o documentos. El enlace siempre inicia en <code>github.io</code> y activa el conteo.</p>
+  </div>
+</footer>
+
 <script>
-  const ENDPOINT = "https://script.google.com/macros/s/AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg/exec"; // tu /exec
+/* ===== Config ===== */
+const BASE = "/datos-hacendarios/go.html"; // ruta a tu go.html en GitHub Pages
+// Catálogo (ids = keys de Apps Script)
+const REPORTS = {
+  pe_cap_2015_2024: { name:'Presupuestos de egresos estatales a nivel capítulo para el periodo 2015 a 2024' },
+  pe_2000_2023:     { name:'Presupuesto de egresos 2000 a 2023' },
+  pe_entidades:     { name:'Reporte del presupuesto de egresos por entidad federativa' },
+  efipem_1989_2024: { name:'Estadísticas de finanzas públicas municipales y estatales. EFIPEM 1989-2024' },
+  cuentas_capitales:{ name:'Cuentas públicas de los municipios capitales' },
+  leyes_2019_2025:  { name:'Estadísticas de Leyes de Ingresos 2019-2025' },
+  leyes_imp_2019_2025:{ name:'Estadísticas de Leyes de Ingresos Impuestos 2019-2025' },
+  efipem_2023:      { name:'Estadísticas de finanzas públicas municipales. EFIPEM 2023' },
+  efipem_1989_2023: { name:'Estadísticas de finanzas públicas municipales. EFIPEM 1989-2023' },
+  deuda_municipal:  { name:'Reporte de deuda pública municipal' },
+  balance_cp_2014_2024:{ name:'Balance de Cuentas Públicas (2014-2024)' },
+  balance_proj_2025_2030:{ name:'Balance de Ingresos y Egresos Proyectados 2025-2030' },
+  balance_ldf_2017_2024:{ name:'Balance de resultado de ingresos y egresos LDF 2017-2024' },
+  eai_ldf:          { name:'Estado Analítico de los Ingresos LDF' },
+  mapas_personal:   { name:'Mapas de personal ocupado por actividad económica' },
+  predial_potencial:{ name:'Impuesto predial potencial' },
+  impuestos_potenciales:{ name:'Impuestos potenciales' },
+  pronosticos:      { name:'Pronósticos' },
+  mapas:            { name:'Mapas' },
+  indicadores:      { name:'Indicadores' },
+  panorama_hacienda:{ name:'Panorama de la Hacienda Pública' },
+  ambientales:      { name:'Ambientales' },
+  deuda:            { name:'Deuda' },
+  municipal:        { name:'Municipal' }
+};
 
-  // Envío robusto (sendBeacon si existe; si no, fetch text/plain)
-  function sendRow(payload) {
-    const body = JSON.stringify(payload);
-    try {
-      if (navigator.sendBeacon) {
-        const blob = new Blob([body], { type: 'text/plain;charset=utf-8' });
-        navigator.sendBeacon(ENDPOINT, blob);
-      } else {
-        fetch(ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body,
-          keepalive: true
-        });
-      }
-    } catch (_) {}
+// Heurística simple de categorías (puedes ajustar nombres o reglas)
+function categorize(id, name){
+  const t = (id + " " + name).toLowerCase();
+  if (/^pe_/.test(id)) return "Presupuesto de Egresos (PE)";
+  if (t.includes("efipem")) return "EFIPEM";
+  if (t.includes("leyes")) return "Leyes de Ingresos";
+  if (t.includes("balance")) return "Balances";
+  if (["pronosticos","impuestos_potenciales","predial_potencial"].some(k=>id===k)) return "Modelos y Potenciales";
+  if (["mapas","mapas_personal"].some(k=>id===k)) return "Mapas";
+  if (["indicadores","panorama_hacienda"].some(k=>id===k)) return "Indicadores y Panorama";
+  if (["deuda","deuda_municipal"].some(k=>id===k)) return "Deuda";
+  if (id==="municipal") return "Municipal";
+  if (id==="ambientales") return "Ambientales";
+  return "Otros";
+}
+
+// Render
+const app = document.getElementById("app");
+const q   = document.getElementById("q");
+const btnGroup = document.getElementById("toggleGroup");
+const btnIds   = document.getElementById("toggleIds");
+let grouped = true;
+let showIds = false;
+
+function buildLink(id){
+  const url = new URL(BASE, location.origin);
+  url.searchParams.set("id", id);
+  return url.toString();
+}
+
+function copyLink(link){
+  navigator.clipboard.writeText(link).then(()=> {
+    toast("Enlace copiado");
+  }).catch(()=> {
+    prompt("Copia manualmente el enlace:", link);
+  });
+}
+
+let toastTimer;
+function toast(msg){
+  clearTimeout(toastTimer);
+  const el = document.createElement("div");
+  el.textContent = msg;
+  Object.assign(el.style,{
+    position:"fixed",left:"50%",bottom:"24px",transform:"translateX(-50%)",
+    background:"var(--fg)",color:"var(--bg)",padding:"10px 14px",
+    borderRadius:"999px",fontSize:".9rem",zIndex:99,opacity:"0.98"
+  });
+  document.body.appendChild(el);
+  toastTimer = setTimeout(()=> el.remove(), 1400);
+}
+
+function render(){
+  const term = q.value.trim().toLowerCase();
+  // Filtro
+  const items = Object.entries(REPORTS)
+    .map(([id, v]) => ({id, name:v.name, link:buildLink(id), cat:categorize(id, v.name)}))
+    .filter(x => !term || x.id.toLowerCase().includes(term) || x.name.toLowerCase().includes(term));
+
+  if (!grouped){
+    // Lista plana
+    app.innerHTML = `
+      <div class="group">
+        <div class="ghead"><h2>Todos</h2><span class="count">${items.length}</span></div>
+        <div class="grid">${items.map(card).join("") || `<div class="empty">Sin resultados</div>`}</div>
+      </div>`;
+    return;
   }
-
-  // Registrar evento con GA4 opcional
-  function pushGA(kind, name, src) {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'pbi_master_' + kind, report_name: name, report_src: src });
+  // Agrupado
+  const groups = {};
+  for (const it of items){
+    groups[it.cat] ||= [];
+    groups[it.cat].push(it);
   }
+  const order = Object.keys(groups).sort((a,b)=>a.localeCompare(b,'es'));
+  app.innerHTML = order.map(cat => `
+    <section class="group" aria-labelledby="h-${cssId(cat)}">
+      <div class="ghead">
+        <h2 id="h-${cssId(cat)}">${cat}</h2>
+        <span class="count">${groups[cat].length}</span>
+      </div>
+      <div class="grid">
+        ${groups[cat].map(card).join("")}
+      </div>
+    </section>
+  `).join("") || `<div class="empty">Sin resultados</div>`;
+}
+function cssId(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,"-"); }
 
-  // Anti doble-conteo por sesión
-  function once(key) {
-    try {
-      if (sessionStorage.getItem(key)) return false;
-      sessionStorage.setItem(key, '1');
-      return true;
-    } catch(_) { return true; }
-  }
+function card(it){
+  return `
+  <article class="card">
+    <h3 class="title">${escapeHtml(it.name)}</h3>
+    ${showIds ? `<div class="id">${it.id}</div>` : ``}
+    <div class="meta">
+      <span class="tag">PBI</span>
+      <span class="tag">${escapeHtml(it.cat)}</span>
+    </div>
+    <div class="actions">
+      <a class="a" href="${it.link}" target="_self" rel="noopener">Abrir</a>
+      <button class="a" onclick="copyLink('${it.link.replace(/'/g,"&#39;")}')" type="button">Copiar enlace</button>
+      <a class="a primary" href="${it.link}" target="_self" rel="noopener">Ir ahora</a>
+    </div>
+  </article>`;
+}
 
-  // Construye payload y envía
-  function postRow(kind) {
-    const iframe = document.getElementById('pbi-master');
-    if (!iframe) return;
-    const src  = iframe.getAttribute('src') || '';
-    const name = iframe.dataset.pbiName || iframe.getAttribute('title') || 'PBI Maestro';
+function escapeHtml(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-    const payload = {
-      r: (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + Math.random().toString(16).slice(2))),
-      kind,
-      name,
-      src,
-      source: location.href,
-      userAgent: navigator.userAgent,
-      ts: Date.now()
-    };
-    sendRow(payload);
-    pushGA(kind, name, src);
-  }
+q.addEventListener("input", render);
+btnGroup.addEventListener("click", () => {
+  grouped = !grouped;
+  btnGroup.setAttribute("aria-pressed", String(grouped));
+  render();
+});
+btnIds.addEventListener("click", () => {
+  showIds = !showIds;
+  btnIds.setAttribute("aria-pressed", String(showIds));
+  render();
+});
 
-  // Inicializa observadores y eventos
-  (function initCounter(){
-    const iframe = document.getElementById('pbi-master');
-    if (!iframe) return;
-
-    // 0) Carga de sesión (una vez por sesión)
-    if (once('pbi_master_session_load')) postRow('session_load');
-
-    // 1) Impresión cuando ≥25% visible
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting || e.intersectionRatio < 0.25) continue;
-
-        if (once('pbi_master_impression')) {
-          postRow('impression');
-        }
-
-        // 2) Vista sostenida a 10s
-        if (once('pbi_master_view_10s')) {
-          setTimeout(() => {
-            if (document.body.contains(iframe)) postRow('view_10s');
-          }, 10000);
-        }
-      }
-    }, { threshold: [0.25] });
-
-    // Espera a que el iframe exista en el DOM y obsérvalo
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => io.observe(iframe));
-    } else {
-      io.observe(iframe);
-    }
-  })();
+// Inicial
+render();
 </script>
 </body>
 </html>
+
