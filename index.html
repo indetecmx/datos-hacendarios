@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>INDETEC · Datos Hacendarios (Master)</title>
+
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+      var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),
+          dl=l!='dataLayer'?'&l='+l:'';
+      j.async=true;
+      j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+      f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-P6SC6N4M'); /* ← tu ID GTM real */
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <style>
+    :root { color-scheme: light dark; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f7f7f7;
+    }
+    .wrap {
+      width: 100%;
+      height: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    header {
+      padding: 8px 14px;
+      font: 600 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: #222;
+    }
+    iframe {
+      width: 100%;
+      height: calc(100vh - 42px);
+      border: none;
+      background: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P6SC6N4M" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div class="wrap">
+    <header>INDETEC · Datos Hacendarios — Bienvenidos </header>
+
+    <!-- === IFRAME DE POWER BI (Archivo Maestro) === -->
+    <iframe id="pbi-master"
+      title="Archivo Maestro - INDETEC"
+      data-pbi-name="Archivo Maestro"
+      src="https://app.powerbi.com/view?r=eyJrIjoiOTJhOWY0ODMtOWE2Zi00ODk0LTgzODgtMzVhMGEzZTMyOTIzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9"
+      allowfullscreen="true">
+    </iframe>
+  </div>
+
+<!-- === CONTADOR: impresión, vista a 10s y session_load del iframe maestro === -->
+<script>
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbwGhPQp8Oqph_ncKaUuHmOXzusartA4XhCSLDKUkGeI3LBCh8Z2EZtWRITrqAhY-ZFx/exec"; // tu /exec
+
+  // Envío robusto (sendBeacon si existe; si no, fetch text/plain)
+  function sendRow(payload) {
+    const body = JSON.stringify(payload);
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: 'text/plain;charset=utf-8' });
+        navigator.sendBeacon(ENDPOINT, blob);
+      } else {
+        fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body,
+          keepalive: true
+        });
+      }
+    } catch (_) {}
+  }
+
+  // Registrar evento con GA4 opcional
+  function pushGA(kind, name, src) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'pbi_master_' + kind, report_name: name, report_src: src });
+  }
+
+  // Anti doble-conteo por sesión
+  function once(key) {
+    try {
+      if (sessionStorage.getItem(key)) return false;
+      sessionStorage.setItem(key, '1');
+      return true;
+    } catch(_) { return true; }
+  }
+
+  // Construye payload y envía
+  function postRow(kind) {
+    const iframe = document.getElementById('pbi-master');
+    if (!iframe) return;
+    const src  = iframe.getAttribute('src') || '';
+    const name = iframe.dataset.pbiName || iframe.getAttribute('title') || 'PBI Maestro';
+
+    const payload = {
+      r: (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + Math.random().toString(16).slice(2))),
+      kind,
+      name,
+      src,
+      source: location.href,
+      userAgent: navigator.userAgent,
+      ts: Date.now()
+    };
+    sendRow(payload);
+    pushGA(kind, name, src);
+  }
+
+  // Inicializa observadores y eventos
+  (function initCounter(){
+    const iframe = document.getElementById('pbi-master');
+    if (!iframe) return;
+
+    // 0) Carga de sesión (una vez por sesión)
+    if (once('pbi_master_session_load')) postRow('session_load');
+
+    // 1) Impresión cuando ≥25% visible
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting || e.intersectionRatio < 0.25) continue;
+
+        if (once('pbi_master_impression')) {
+          postRow('impression');
+        }
+
+        // 2) Vista sostenida a 10s
+        if (once('pbi_master_view_10s')) {
+          setTimeout(() => {
+            if (document.body.contains(iframe)) postRow('view_10s');
+          }, 10000);
+        }
+      }
+    }, { threshold: [0.25] });
+
+    // Espera a que el iframe exista en el DOM y obsérvalo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => io.observe(iframe));
+    } else {
+      io.observe(iframe);
+    }
+  })();
+</script>
+</body>
+</html>
