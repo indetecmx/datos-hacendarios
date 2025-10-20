@@ -84,6 +84,10 @@
 
       <article class="card"><h3 class="title">Mapas de personal ocupado</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="go.html?id=mapas_personal">Abrir</a></div></article>
       <article class="card"><h3 class="title">Impuesto predial potencial</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="go.html?id=predial_potencial">Abrir</a></div></article>
+
+      <!-- 🆕 Nuevos -->
+      <article class="card"><h3 class="title">Derechos de agua potable</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="go.html?id=derechos_agua">Abrir</a></div></article>
+      <article class="card"><h3 class="title">Censos Económicos 2024</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="go.html?id=censos_eco24">Abrir</a></div></article>
     </div>
 
     <div id="app" hidden></div>
@@ -131,7 +135,11 @@ const REPORTS={
   panorama_hacienda:{name:'Panorama de la Hacienda Pública'},
   ambientales:{name:'Ambientales'},
   deuda:{name:'Deuda'},
-  municipal:{name:'Municipal'}
+  municipal:{name:'Municipal'},
+
+  /* 🆕 Nuevos */
+  derechos_agua:{name:'Derechos de agua potable'},
+  censos_eco24:{name:'Censos Económicos 2024'}
 };
 
 const q=document.getElementById('q');
@@ -152,6 +160,9 @@ function categorize(id,name){
   if(["deuda","deuda_municipal"].includes(id)) return "Deuda";
   if(id==="municipal") return "Municipal";
   if(id==="ambientales") return "Ambientales";
+  // 🆕 categorías específicas
+  if(id==="derechos_agua") return "Ingresos y Derechos";
+  if(id==="censos_eco24")  return "Censos Económicos";
   return "Otros";
 }
 function esc(s){ return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
