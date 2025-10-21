@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>En Construcción · Datos Hacendarios</title>
+  <style>
+    :root {
+      --bg:#0b0d12; --fg:#eaeef8; --accent:#2f6fed;
+    }
+    body {
+      margin:0;
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:Inter, Nunito, system-ui, sans-serif;
+      text-align:center;
+    }
+    h1 { font-size:2.2rem; margin-bottom:.5rem; }
+    p { color:#a3a9b9; font-size:1rem; }
+    .loader {
+      margin-top:1.8rem;
+      border:4px solid #1a1e2a;
+      border-top:4px solid var(--accent);
+      border-radius:50%;
+      width:42px; height:42px;
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <h1>🚧 En Construcción 🚧</h1>
+  <p>La sección estará disponible próximamente en <strong>Datos Hacendarios</strong>.</p>
+  <div class="loader"></div>
+</body>
+</html>
