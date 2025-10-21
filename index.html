@@ -206,6 +206,33 @@ btnIds.addEventListener("click",()=>{showIds=!showIds;btnIds.setAttribute("aria-
 
 // mejora tras el primer pintado
 window.addEventListener('DOMContentLoaded', render, {once:true});
+<script>
+  // Mostrar página "en construcción" y ocultar el resto
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      background:#0b0d12;
+      color:#eaeef8;
+      font-family:Inter, Nunito, system-ui, sans-serif;
+      text-align:center;
+    ">
+      <h1 style="font-size:2.2rem;">🚧 En Construcción 🚧</h1>
+      <p style="color:#a3a9b9;">La plataforma <strong>Datos Hacendarios</strong> estará disponible próximamente.</p>
+      <div style="
+        margin-top:2rem;
+        border:4px solid #1a1e2a;
+        border-top:4px solid #2f6fed;
+        border-radius:50%;
+        width:42px;height:42px;
+        animation:spin 1s linear infinite;
+      "></div>
+      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+    </div>
+  `;
 </script>
 </body>
 </html>
