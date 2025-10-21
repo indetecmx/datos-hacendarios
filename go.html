@@ -3,33 +3,71 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>INDETEC · Apertura de reporte</title>
+<title>INDETEC · Abriendo reporte…</title>
 <meta name="color-scheme" content="light dark">
 
 <link rel="dns-prefetch" href="https://script.google.com">
 <link rel="preconnect" href="https://script.google.com" crossorigin>
 
 <style>
-  :root{--bg:#0b0d12;--fg:#eaeef8;--muted:#9aa3b5;--accent:#2f6fed;--ok:#5bd19a}
-  @media (prefers-color-scheme:light){
-    :root{--bg:#f7f9fc;--fg:#0b0d12;--muted:#5b6476;--accent:#2f6fed;--ok:#10b981}
+  :root{
+    --bg:#0b0d12; --fg:#eaeef8; --muted:#9aa3b5; --accent:#2f6fed; --ok:#5bd19a; --card:#121621;
   }
-  body{margin:0;padding:40px;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center}
-  h1{font-size:1.4rem;margin-bottom:10px}
-  .loader{border:4px solid rgba(0,0,0,.15);border-top:4px solid var(--accent);border-radius:50%;width:40px;height:40px;margin:18px auto;animation:spin 1s linear infinite}
+  @media (prefers-color-scheme:light){
+    :root{ --bg:#f7f9fc; --fg:#0b0d12; --muted:#5b6476; --accent:#2f6fed; --ok:#10b981; --card:#ffffff; }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100svh; display:grid; place-items:center;
+    background:var(--bg); color:var(--fg);
+    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  }
+  .card{
+    width:min(760px,92vw); background:var(--card); border:1px solid rgba(255,255,255,.06);
+    border-radius:16px; padding:28px 24px; box-shadow:0 8px 40px rgba(0,0,0,.22);
+  }
+  .brand{display:grid; justify-items:center; gap:10px; margin-bottom:10px}
+  .brand svg{max-height:60px; width:auto}
+  h1{font-size:1.25rem; margin:8px 0 4px; text-align:center}
+  .subtitle{color:var(--muted); text-align:center; margin:0 0 12px}
+  .name{font-size:1.05rem; font-weight:600; text-align:center; margin:4px 0}
+  .ok{color:var(--ok); font-weight:600; text-align:center; margin:8px 0 0}
+  .loader{
+    border:4px solid rgba(255,255,255,.15); border-top:4px solid var(--accent);
+    width:42px; height:42px; border-radius:50%; margin:16px auto; animation:spin 1s linear infinite;
+  }
   @keyframes spin{to{transform:rotate(360deg)}}
-  .ok{color:var(--ok);font-weight:600;margin-top:10px}
-  .meta{color:var(--muted);font-size:.9rem}
-  .foot{color:var(--muted);font-size:.85rem;margin-top:22px;line-height:1.4}
-  a.btn{display:inline-block;margin-top:20px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:12px;text-decoration:none;font-weight:600}
+  .actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px}
+  .btn{
+    padding:11px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.12);
+    background:transparent; color:var(--fg); text-decoration:none; cursor:pointer; min-width:160px; text-align:center;
+  }
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600}
 </style>
 </head>
 <body>
-  <h1 id="titulo">Conectando con el servidor…</h1>
-  <p id="msg" class="meta">Verificando enlace seguro de Datos Hacendarios.</p>
+<main class="card">
+  <div class="brand">
+    <!-- Logotipo Datos Hacendarios -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1989 673"><path fill="#007a3d" d="M71 51h278c208 0 377 169 377 377S557 805 349 805H71Z" transform="translate(-71 -132)"/><path fill="#fff" d="M242 287h67v366h-67Zm143 113h67v140h-67Zm139-113h67v366h-67Z" transform="translate(-71 -132)"/><text x="600" y="250" font-family="Segoe UI, sans-serif" font-size="210" fill="#707070">Datos</text><text x="600" y="480" font-family="Segoe UI, sans-serif" font-size="210" fill="#707070">Hacendarios</text><rect x="590" y="520" width="1370" height="16" fill="#007a3d"/><text x="1600" y="640" font-family="Segoe UI, sans-serif" font-size="180" fill="#707070">Indetec</text></svg>
+    
+    <!-- Logotipo INDETEC -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 765"><path fill="#007a3d" d="M447 707c-182-33-271-190-200-501C283 97 333-4 333-4s141 75 197 355c-64 94-229 345-83 466-29-11-59-31-77-62 61-44 91-89 109-150 64 7 124 60 124 60s-68 77-155 109c-40-19-64-44-74-77z"/><text x="500" y="570" font-size="430" font-family="Segoe UI, sans-serif" fill="#777">Indetec</text><text x="650" y="670" font-size="75" font-family="Segoe UI, sans-serif" fill="#777">Instituto para el Desarrollo Técnico de las Haciendas Públicas</text></svg>
+  </div>
+
+  <h1 id="titulo">Abriendo reporte</h1>
+  <p class="subtitle">Conexión segura a Power BI verificada.</p>
+  <p class="name" id="nombre">—</p>
+
   <div class="loader" role="progressbar" aria-label="Cargando"></div>
-  <p class="ok" id="ok"></p>
-  <p class="foot">Este acceso se registra de forma anónima para fines estadísticos. No se recopila información personal ni sensible.</p>
+  <p class="ok" id="ok">Enlace verificado correctamente.</p>
+
+  <div class="actions">
+    <a id="btnAbrir" class="btn primary" href="#">Abrir ahora</a>
+    <button id="btnCopiar" class="btn" type="button">Copiar enlace estable</button>
+    <a class="btn" href="./" rel="noopener">Volver al catálogo</a>
+  </div>
+</main>
 
 <script>
 (function(){
@@ -40,9 +78,9 @@
     pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo (2015–2024)'},
     pe_2000_2023:{name:'Presupuesto de egresos 2000–2023'},
     pe_entidades:{name:'Presupuesto de egresos por entidad federativa'},
-    efipem_1989_2024:{name:'Estadísticas EFIPEM 1989–2024'},
+    efipem_1989_2024:{name:'EFIPEM 1989–2024'},
     cuentas_capitales:{name:'Cuentas públicas de municipios capitales'},
-    leyes_2019_2025:{name:'Estadísticas de Leyes de Ingresos 2019–2025'},
+    leyes_2019_2025:{name:'Leyes de Ingresos 2019–2025'},
     leyes_imp_2019_2025:{name:'Leyes de Ingresos – Impuestos 2019–2025'},
     efipem_2023:{name:'EFIPEM 2023'},
     efipem_1989_2023:{name:'EFIPEM 1989–2023'},
@@ -50,59 +88,46 @@
     balance_cp_2014_2024:{name:'Balance de Cuentas Públicas 2014–2024'},
     balance_proj_2025_2030:{name:'Proyecciones 2025–2030'},
     balance_ldf_2017_2024:{name:'Balance LDF 2017–2024'},
-    eai_ldf:{name:'Estado Analítico de los Ingresos LDF'},
-    mapas_personal:{name:'Mapas de personal ocupado por actividad económica'},
-    predial_potencial:{name:'Impuesto Predial Potencial'},
-    impuestos_potenciales:{name:'Impuestos Potenciales'},
-    pronosticos:{name:'Pronósticos fiscales'},
+    eai_ldf:{name:'Estado Analítico de los Ingresos (LDF)'},
+    mapas_personal:{name:'Mapas de personal ocupado'},
+    predial_potencial:{name:'Impuesto predial potencial'},
+    impuestos_potenciales:{name:'Impuestos potenciales'},
+    pronosticos:{name:'Pronósticos'},
     mapas:{name:'Mapas'},
     indicadores:{name:'Indicadores'},
     panorama_hacienda:{name:'Panorama de la Hacienda Pública'},
     ambientales:{name:'Ambientales'},
     deuda:{name:'Deuda'},
     municipal:{name:'Municipal'},
-    derechos_agua:{name:'Derechos de Agua Potable'},
-    censos_eco24:{name:'Censos Económicos 2024'},
-    // Mapas estatales
-    mapas_AGS:{name:'Mapas · Aguascalientes'}, mapas_BC:{name:'Mapas · Baja California'},
-    mapas_BCS:{name:'Mapas · Baja California Sur'}, mapas_CAMP:{name:'Mapas · Campeche'},
-    mapas_CHIS:{name:'Mapas · Chiapas'}, mapas_CHIH:{name:'Mapas · Chihuahua'},
-    mapas_COAH:{name:'Mapas · Coahuila'}, mapas_COL:{name:'Mapas · Colima'},
-    mapas_CDMX:{name:'Mapas · Ciudad de México'}, mapas_DGO:{name:'Mapas · Durango'},
-    mapas_GTO:{name:'Mapas · Guanajuato'}, mapas_GRO:{name:'Mapas · Guerrero'},
-    mapas_HGO:{name:'Mapas · Hidalgo'}, mapas_JAL:{name:'Mapas · Jalisco'},
-    mapas_EDOMEX:{name:'Mapas · Estado de México'}, mapas_MICH:{name:'Mapas · Michoacán'},
-    mapas_MOR:{name:'Mapas · Morelos'}, mapas_NAY:{name:'Mapas · Nayarit'},
-    mapas_NL:{name:'Mapas · Nuevo León'}, mapas_OAX:{name:'Mapas · Oaxaca'},
-    mapas_SLP:{name:'Mapas · San Luis Potosí'}, mapas_PUE:{name:'Mapas · Puebla'},
-    mapas_QRO:{name:'Mapas · Querétaro'}, mapas_QROO:{name:'Mapas · Quintana Roo'},
-    mapas_SIN:{name:'Mapas · Sinaloa'}, mapas_SON:{name:'Mapas · Sonora'},
-    mapas_TAB:{name:'Mapas · Tabasco'}, mapas_TAMPS:{name:'Mapas · Tamaulipas'},
-    mapas_TLAX:{name:'Mapas · Tlaxcala'}, mapas_VER:{name:'Mapas · Veracruz'},
-    mapas_YC:{name:'Mapas · Yucatán'}, mapas_ZAC:{name:'Mapas · Zacatecas'}
+    derechos_agua:{name:'Derechos de agua potable'},
+    censos_eco24:{name:'Censos Económicos 2024'}
   };
 
-  const p = new URLSearchParams(location.search);
-  const id = p.get("id");
-  if(!id){
-    document.getElementById("titulo").textContent = "Falta el parámetro ?id=";
-    document.getElementById("msg").textContent = "No se puede identificar el reporte.";
-    return;
-  }
+  const $ = s => document.querySelector(s);
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id") || "";
+  const name = REPORTS[id]?.name || id.replace(/_/g,' ').replace(/\b\w/g,m=>m.toUpperCase());
 
-  const name = REPORTS[id]?.name || id;
-  document.getElementById("titulo").textContent = "Abriendo reporte";
-  document.getElementById("msg").textContent = name;
-  document.getElementById("ok").textContent = "Enlace verificado correctamente.";
+  $("#nombre").textContent = name || "Reporte";
 
-  // Registrar clic (no bloqueante)
-  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
-  const payload = new Blob([JSON.stringify({r:id,name,src,ts:Date.now(),ua:navigator.userAgent})],{type:"application/json"});
-  navigator.sendBeacon(BASE,payload);
+  $("#btnCopiar").addEventListener("click", async () => {
+    try{
+      await navigator.clipboard.writeText(location.href);
+      const b=$("#btnCopiar"); b.textContent="Enlace copiado"; setTimeout(()=>b.textContent="Copiar enlace estable",1400);
+    }catch{}
+  });
 
-  // Redirigir tras breve pausa
-  setTimeout(()=>{location.replace(BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src));},1200);
+  try{
+    const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
+    const payload = new Blob([JSON.stringify({r:id,name,src,ts:Date.now(),ua:navigator.userAgent})], {type:"application/json"});
+    navigator.sendBeacon(BASE, payload);
+  }catch(e){}
+
+  const dest = BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(location.origin + location.pathname + "?id=" + encodeURIComponent(id));
+  $("#btnAbrir").setAttribute("href", dest);
+  location.replace(dest);
 })();
 </script>
 </body>
 </html>
+
