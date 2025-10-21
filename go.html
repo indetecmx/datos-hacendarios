@@ -3,55 +3,105 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Redirigiendo… | Datos Hacendarios</title>
+<title>INDETEC · Apertura de reporte</title>
 <meta name="color-scheme" content="light dark">
 
-<!-- Preconexiones para bajar latencia -->
 <link rel="dns-prefetch" href="https://script.google.com">
 <link rel="preconnect" href="https://script.google.com" crossorigin>
 
 <style>
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;padding:40px;text-align:center}
-  .loader{border:4px solid rgba(0,0,0,.12);border-top:4px solid #2f6fed;border-radius:50%;width:36px;height:36px;margin:18px auto;animation:spin 1s linear infinite}
+  :root{--bg:#0b0d12;--fg:#eaeef8;--muted:#9aa3b5;--accent:#2f6fed;--ok:#5bd19a}
+  @media (prefers-color-scheme:light){
+    :root{--bg:#f7f9fc;--fg:#0b0d12;--muted:#5b6476;--accent:#2f6fed;--ok:#10b981}
+  }
+  body{margin:0;padding:40px;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center}
+  h1{font-size:1.4rem;margin-bottom:10px}
+  .loader{border:4px solid rgba(0,0,0,.15);border-top:4px solid var(--accent);border-radius:50%;width:40px;height:40px;margin:18px auto;animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
+  .ok{color:var(--ok);font-weight:600;margin-top:10px}
+  .meta{color:var(--muted);font-size:.9rem}
+  .foot{color:var(--muted);font-size:.85rem;margin-top:22px;line-height:1.4}
+  a.btn{display:inline-block;margin-top:20px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:12px;text-decoration:none;font-weight:600}
 </style>
 </head>
 <body>
-<h2>Redirigiendo al reporte…</h2>
-<p id="msg">Conectando con el servidor.</p>
-<div class="loader" role="progressbar" aria-label="Cargando"></div>
-
-<noscript>
-  <p>JavaScript está deshabilitado. Abre manualmente este enlace (copiar y pegar):</p>
-  <!-- Hint: si necesitas, puedes imprimir aquí un URL base genérico -->
-</noscript>
+  <h1 id="titulo">Conectando con el servidor…</h1>
+  <p id="msg" class="meta">Verificando enlace seguro de Datos Hacendarios.</p>
+  <div class="loader" role="progressbar" aria-label="Cargando"></div>
+  <p class="ok" id="ok"></p>
+  <p class="foot">Este acceso se registra de forma anónima para fines estadísticos. No se recopila información personal ni sensible.</p>
 
 <script>
 (function(){
-  // CONFIGURA tu Deployment ID:
   const DEPLOY_ID = "AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg";
   const BASE = `https://script.google.com/macros/s/${DEPLOY_ID}/exec`;
+
+  const REPORTS = {
+    pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo (2015–2024)'},
+    pe_2000_2023:{name:'Presupuesto de egresos 2000–2023'},
+    pe_entidades:{name:'Presupuesto de egresos por entidad federativa'},
+    efipem_1989_2024:{name:'Estadísticas EFIPEM 1989–2024'},
+    cuentas_capitales:{name:'Cuentas públicas de municipios capitales'},
+    leyes_2019_2025:{name:'Estadísticas de Leyes de Ingresos 2019–2025'},
+    leyes_imp_2019_2025:{name:'Leyes de Ingresos – Impuestos 2019–2025'},
+    efipem_2023:{name:'EFIPEM 2023'},
+    efipem_1989_2023:{name:'EFIPEM 1989–2023'},
+    deuda_municipal:{name:'Deuda pública municipal'},
+    balance_cp_2014_2024:{name:'Balance de Cuentas Públicas 2014–2024'},
+    balance_proj_2025_2030:{name:'Proyecciones 2025–2030'},
+    balance_ldf_2017_2024:{name:'Balance LDF 2017–2024'},
+    eai_ldf:{name:'Estado Analítico de los Ingresos LDF'},
+    mapas_personal:{name:'Mapas de personal ocupado por actividad económica'},
+    predial_potencial:{name:'Impuesto Predial Potencial'},
+    impuestos_potenciales:{name:'Impuestos Potenciales'},
+    pronosticos:{name:'Pronósticos fiscales'},
+    mapas:{name:'Mapas'},
+    indicadores:{name:'Indicadores'},
+    panorama_hacienda:{name:'Panorama de la Hacienda Pública'},
+    ambientales:{name:'Ambientales'},
+    deuda:{name:'Deuda'},
+    municipal:{name:'Municipal'},
+    derechos_agua:{name:'Derechos de Agua Potable'},
+    censos_eco24:{name:'Censos Económicos 2024'},
+    // Mapas estatales
+    mapas_AGS:{name:'Mapas · Aguascalientes'}, mapas_BC:{name:'Mapas · Baja California'},
+    mapas_BCS:{name:'Mapas · Baja California Sur'}, mapas_CAMP:{name:'Mapas · Campeche'},
+    mapas_CHIS:{name:'Mapas · Chiapas'}, mapas_CHIH:{name:'Mapas · Chihuahua'},
+    mapas_COAH:{name:'Mapas · Coahuila'}, mapas_COL:{name:'Mapas · Colima'},
+    mapas_CDMX:{name:'Mapas · Ciudad de México'}, mapas_DGO:{name:'Mapas · Durango'},
+    mapas_GTO:{name:'Mapas · Guanajuato'}, mapas_GRO:{name:'Mapas · Guerrero'},
+    mapas_HGO:{name:'Mapas · Hidalgo'}, mapas_JAL:{name:'Mapas · Jalisco'},
+    mapas_EDOMEX:{name:'Mapas · Estado de México'}, mapas_MICH:{name:'Mapas · Michoacán'},
+    mapas_MOR:{name:'Mapas · Morelos'}, mapas_NAY:{name:'Mapas · Nayarit'},
+    mapas_NL:{name:'Mapas · Nuevo León'}, mapas_OAX:{name:'Mapas · Oaxaca'},
+    mapas_SLP:{name:'Mapas · San Luis Potosí'}, mapas_PUE:{name:'Mapas · Puebla'},
+    mapas_QRO:{name:'Mapas · Querétaro'}, mapas_QROO:{name:'Mapas · Quintana Roo'},
+    mapas_SIN:{name:'Mapas · Sinaloa'}, mapas_SON:{name:'Mapas · Sonora'},
+    mapas_TAB:{name:'Mapas · Tabasco'}, mapas_TAMPS:{name:'Mapas · Tamaulipas'},
+    mapas_TLAX:{name:'Mapas · Tlaxcala'}, mapas_VER:{name:'Mapas · Veracruz'},
+    mapas_YC:{name:'Mapas · Yucatán'}, mapas_ZAC:{name:'Mapas · Zacatecas'}
+  };
 
   const p = new URLSearchParams(location.search);
   const id = p.get("id");
   if(!id){
-    document.getElementById("msg").textContent = "Falta el parámetro ?id= en la URL.";
+    document.getElementById("titulo").textContent = "Falta el parámetro ?id=";
+    document.getElementById("msg").textContent = "No se puede identificar el reporte.";
     return;
   }
 
-  // Pasamos 'src' (la propia URL GitHub que invoca), útil para 'source' en tu hoja
-  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
-  const url = `${BASE}?id=${encodeURIComponent(id)}&src=${encodeURIComponent(src)}`;
+  const name = REPORTS[id]?.name || id;
+  document.getElementById("titulo").textContent = "Abriendo reporte";
+  document.getElementById("msg").textContent = name;
+  document.getElementById("ok").textContent = "Enlace verificado correctamente.";
 
-  // 🚀 Redirección inmediata (sin esperas)
-  try {
-    document.getElementById("msg").textContent = `Abriendo: ${id}`;
-    location.replace(url);
-  } catch (e) {
-    document.getElementById("msg").textContent = "No se pudo redirigir automáticamente. Abre el enlace:";
-    const a = document.createElement("a"); a.href = url; a.textContent = url;
-    a.rel="noopener"; a.target="_self"; document.body.appendChild(a);
-  }
+  // Registrar clic (no bloqueante)
+  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
+  const payload = new Blob([JSON.stringify({r:id,name,src,ts:Date.now(),ua:navigator.userAgent})],{type:"application/json"});
+  navigator.sendBeacon(BASE,payload);
+
+  // Redirigir tras breve pausa
+  setTimeout(()=>{location.replace(BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src));},1200);
 })();
 </script>
 </body>
