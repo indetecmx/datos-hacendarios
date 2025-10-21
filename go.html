@@ -26,8 +26,17 @@
     width:min(760px,92vw); background:var(--card); border:1px solid rgba(255,255,255,.06);
     border-radius:16px; padding:28px 24px; box-shadow:0 8px 40px rgba(0,0,0,.22);
   }
-  .brand{display:grid; justify-items:center; gap:10px; margin-bottom:10px}
-  .brand svg{max-height:60px; width:auto}
+
+  /* ====== Logos “cuadrados” y centrados ====== */
+  .brand{display:grid; gap:10px; margin-bottom:10px; justify-items:center}
+  .logo-box{
+    width:min(640px,92%);                       /* ancho máximo */
+    height:72px;                                /* alto fijo para alinear */
+    display:grid; place-items:center;           /* centra el SVG en ambas direcciones */
+  }
+  .logo-box.small{height:48px;}                 /* segunda línea, más compacta */
+  .logo-box svg{max-width:100%; max-height:100%; display:block}
+
   h1{font-size:1.25rem; margin:8px 0 4px; text-align:center}
   .subtitle{color:var(--muted); text-align:center; margin:0 0 12px}
   .name{font-size:1.05rem; font-weight:600; text-align:center; margin:4px 0}
@@ -47,12 +56,26 @@
 </head>
 <body>
 <main class="card">
-  <div class="brand">
-    <!-- Logotipo Datos Hacendarios -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1989 673"><path fill="#007a3d" d="M71 51h278c208 0 377 169 377 377S557 805 349 805H71Z" transform="translate(-71 -132)"/><path fill="#fff" d="M242 287h67v366h-67Zm143 113h67v140h-67Zm139-113h67v366h-67Z" transform="translate(-71 -132)"/><text x="600" y="250" font-family="Segoe UI, sans-serif" font-size="210" fill="#707070">Datos</text><text x="600" y="480" font-family="Segoe UI, sans-serif" font-size="210" fill="#707070">Hacendarios</text><rect x="590" y="520" width="1370" height="16" fill="#007a3d"/><text x="1600" y="640" font-family="Segoe UI, sans-serif" font-size="180" fill="#707070">Indetec</text></svg>
-    
-    <!-- Logotipo INDETEC -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 765"><path fill="#007a3d" d="M447 707c-182-33-271-190-200-501C283 97 333-4 333-4s141 75 197 355c-64 94-229 345-83 466-29-11-59-31-77-62 61-44 91-89 109-150 64 7 124 60 124 60s-68 77-155 109c-40-19-64-44-74-77z"/><text x="500" y="570" font-size="430" font-family="Segoe UI, sans-serif" fill="#777">Indetec</text><text x="650" y="670" font-size="75" font-family="Segoe UI, sans-serif" fill="#777">Instituto para el Desarrollo Técnico de las Haciendas Públicas</text></svg>
+  <div class="brand" aria-hidden="true">
+    <!-- Logo Datos Hacendarios -->
+    <div class="logo-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1989 673">
+        <path fill="#007a3d" d="M71 51h278c208 0 377 169 377 377S557 805 349 805H71Z" transform="translate(-71 -132)"/>
+        <path fill="#fff" d="M242 287h67v366h-67Zm143 113h67v140h-67Zm139-113h67v366h-67Z" transform="translate(-71 -132)"/>
+        <text x="600" y="250" font-family="Segoe UI, sans-serif" font-size="210" fill="#707070">Datos</text>
+        <text x="600" y="480" font-family="Segoe UI, sans-serif" font-size="210" fill="#707070">Hacendarios</text>
+        <rect x="590" y="520" width="1370" height="16" fill="#007a3d"/>
+        <text x="1600" y="640" font-family="Segoe UI, sans-serif" font-size="180" fill="#707070">Indetec</text>
+      </svg>
+    </div>
+    <!-- Logo INDETEC -->
+    <div class="logo-box small">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 765">
+        <path fill="#007a3d" d="M447 707c-182-33-271-190-200-501C283 97 333-4 333-4s141 75 197 355c-64 94-229 345-83 466-29-11-59-31-77-62 61-44 91-89 109-150 64 7 124 60 124 60s-68 77-155 109c-40-19-64-44-74-77z"/>
+        <text x="500" y="570" font-size="430" font-family="Segoe UI, sans-serif" fill="#777">Indetec</text>
+        <text x="650" y="670" font-size="75" font-family="Segoe UI, sans-serif" fill="#777">Instituto para el Desarrollo Técnico de las Haciendas Públicas</text>
+      </svg>
+    </div>
   </div>
 
   <h1 id="titulo">Abriendo reporte</h1>
@@ -65,7 +88,6 @@
   <div class="actions">
     <a id="btnAbrir" class="btn primary" href="#">Abrir ahora</a>
     <button id="btnCopiar" class="btn" type="button">Copiar enlace estable</button>
-    <a class="btn" href="./" rel="noopener">Volver al catálogo</a>
   </div>
 </main>
 
@@ -74,6 +96,7 @@
   const DEPLOY_ID = "AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg";
   const BASE = `https://script.google.com/macros/s/${DEPLOY_ID}/exec`;
 
+  // Catálogo para mostrar nombre legible (no mapea destinos; eso lo resuelve Apps Script)
   const REPORTS = {
     pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo (2015–2024)'},
     pe_2000_2023:{name:'Presupuesto de egresos 2000–2023'},
@@ -86,10 +109,10 @@
     efipem_1989_2023:{name:'EFIPEM 1989–2023'},
     deuda_municipal:{name:'Deuda pública municipal'},
     balance_cp_2014_2024:{name:'Balance de Cuentas Públicas 2014–2024'},
-    balance_proj_2025_2030:{name:'Proyecciones 2025–2030'},
+    balance_proj_2025_2030:{name:'Balance proyectado 2025–2030'},
     balance_ldf_2017_2024:{name:'Balance LDF 2017–2024'},
     eai_ldf:{name:'Estado Analítico de los Ingresos (LDF)'},
-    mapas_personal:{name:'Mapas de personal ocupado'},
+    mapas_personal:{name:'Mapas de personal ocupado por actividad económica'},
     predial_potencial:{name:'Impuesto predial potencial'},
     impuestos_potenciales:{name:'Impuestos potenciales'},
     pronosticos:{name:'Pronósticos'},
@@ -101,6 +124,7 @@
     municipal:{name:'Municipal'},
     derechos_agua:{name:'Derechos de agua potable'},
     censos_eco24:{name:'Censos Económicos 2024'}
+    // (Si quieres, aquí podrías añadir los “mapas_XXX” solo para mostrar nombres)
   };
 
   const $ = s => document.querySelector(s);
@@ -110,24 +134,27 @@
 
   $("#nombre").textContent = name || "Reporte";
 
+  // Copiar enlace estable (go.html?id=...)
   $("#btnCopiar").addEventListener("click", async () => {
+    const share = new URL(location.href);
+    share.search = ""; // limpio
+    share.pathname = share.pathname.replace(/[^/]+$/, "go.html");
+    share.searchParams.set("id", id);
     try{
-      await navigator.clipboard.writeText(location.href);
+      await navigator.clipboard.writeText(share.toString());
       const b=$("#btnCopiar"); b.textContent="Enlace copiado"; setTimeout(()=>b.textContent="Copiar enlace estable",1400);
     }catch{}
   });
 
-  try{
-    const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
-    const payload = new Blob([JSON.stringify({r:id,name,src,ts:Date.now(),ua:navigator.userAgent})], {type:"application/json"});
-    navigator.sendBeacon(BASE, payload);
-  }catch(e){}
-
-  const dest = BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(location.origin + location.pathname + "?id=" + encodeURIComponent(id));
+  // Lanzar redirección inmediata y preparar botón de respaldo
+  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
+  const dest = BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src);
   $("#btnAbrir").setAttribute("href", dest);
   location.replace(dest);
 })();
 </script>
 </body>
+</html>
+
 </html>
 
