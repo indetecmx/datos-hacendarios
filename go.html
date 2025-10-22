@@ -32,10 +32,10 @@
   <div class="loader" role="progressbar" aria-label="Cargando"></div>
 
 <script>
-/* ====== 1) TU Apps Script de tracking (POST) ====== */
-const TRACK_URL = "https://script.google.com/macros/s/AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg/exec";
+/* ========= 1) TU Apps Script ========= */
+const TRACK_URL = "https://script.google.com/macros/s/AKfycbwGhPQp8Oqph_ncKaUuHmOXzusartA4XhCSLDKUkGeI3LBCh8Z2EZtWRITrqAhY-ZFx/exec";
 
-/* ====== 2) Catálogo opcional de nombres (solo para la UI del loading) ====== */
+/* ========= 2) Nombres (solo UI) ========= */
 const NAMES = {
   pe_cap_2015_2024:'Presupuestos de egresos estatales a nivel capítulo para el periodo 2015 a 2024',
   pe_2000_2023:'Presupuesto de egresos 2000 a 2023',
@@ -63,7 +63,7 @@ const NAMES = {
   municipal:'Municipal',
   derechos_agua:'Derechos de agua potable',
   censos_eco24:'Censos Económicos 2024',
-  // Mapas por estado (aceptamos YC y YUC por compatibilidad)
+  // Mapas por estado (YC y YUC compatibles)
   mapas_AGS:'Mapas · AGS', mapas_BC:'Mapas · BC', mapas_BCS:'Mapas · BCS', mapas_CAMP:'Mapas · CAMP',
   mapas_CHIS:'Mapas · CHIS', mapas_CHIH:'Mapas · CHIH', mapas_COAH:'Mapas · COAH', mapas_COL:'Mapas · COL',
   mapas_CDMX:'Mapas · CDMX', mapas_DGO:'Mapas · DGO', mapas_GTO:'Mapas · GTO', mapas_GRO:'Mapas · GRO',
@@ -75,7 +75,7 @@ const NAMES = {
   mapas_ZAC:'Mapas · ZAC'
 };
 
-/* ====== 3) Destinos (TU catálogo completo) ====== */
+/* ========= 3) Destinos (completo) ========= */
 const TARGETS = {
   pe_cap_2015_2024:"https://app.powerbi.com/view?r=eyJrIjoiNGJkYjJjNDItNjdjYS00YTg3LWE3YjUtZDMzYjUwZTMxNzlmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
   pe_2000_2023:"https://app.powerbi.com/view?r=eyJrIjoiMzgxODE4ZDEtYTRjNi00MDZiLTg1ZWMtMTkyNDMzMTlmNjc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
@@ -138,68 +138,60 @@ const TARGETS = {
   mapas_ZAC:"https://app.powerbi.com/view?r=eyJrIjoiMWQ5YTI0NGYtNzg1ZS00NGVmLWIzNzMtZTU0YTg5YzI4ZWVjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9"
 };
 
-/* ====== 4) Lógica ====== */
-(function(){
+/* ========= 4) Lógica ========= */
+(async function(){
   const qs = new URLSearchParams(location.search);
-  const id = qs.get("id") || qs.get("r");
-  const src = qs.get("src") || "";
+  const id = (qs.get("id") || qs.get("r") || "").trim();
+  const src = (qs.get("src") || "go.html").trim();
   const t = document.getElementById("t");
   const m = document.getElementById("m");
 
-  if(!id){
-    t.textContent = "Falta el parámetro ?id=";
-    m.textContent = "";
-    document.body.insertAdjacentHTML("beforeend",
-      '<p style="margin-top:14px"><a class="btn" href="./index.html">Ver catálogo</a></p>');
+  if(!id || !(id in TARGETS) ){
+    t.textContent = "Falta o es inválido el id del reporte.";
+    m.textContent = "Ejemplo: ?id=mapas_QRO";
     return;
   }
 
-  // Resuelve destino; tolera mapas_YUC ↔ mapas_YC
-  let dest = TARGETS[id];
-  if(!dest && id === "mapas_YUC") dest = TARGETS["mapas_YC"];
-
-  if(!dest){
-    t.textContent = "ID desconocido";
-    m.textContent = id;
-    document.body.insertAdjacentHTML("beforeend",
-      '<p style="margin-top:14px"><a class="btn" href="./index.html">Ver catálogo</a></p>');
-    return;
-  }
-
-  const name = NAMES[id] || NAMES[id?.replace("mapas_YUC","mapas_YC")] || id;
+  const dest = TARGETS[id] || "";
+  const name = NAMES[id] || id;
   t.textContent = "Abriendo reporte";
   m.textContent = name;
 
-  // Enviar registro (no bloqueante)
-  const payload = {
-    r: id, name,
-    ts: Date.now(),
-    userAgent: navigator.userAgent,
-    source: src || "go.html"
-  };
-  let sent = false;
+  // --- tracking robusto: 1) sendBeacon  2) fetch no-cors keepalive  3) GET al doGet (registro puro)
+  const payload = { r:id, name, ts: Date.now(), userAgent: navigator.userAgent, source: src };
+
+  let ok = false;
   try{
     if(navigator.sendBeacon){
       const blob = new Blob([JSON.stringify(payload)], {type:"application/json"});
-      sent = navigator.sendBeacon(TRACK_URL, blob);
+      ok = navigator.sendBeacon(TRACK_URL, blob);
     }
   }catch{}
-  if(!sent){
+
+  if(!ok){
     try{
-      fetch(TRACK_URL, {
+      await fetch(TRACK_URL, {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify(payload),
         keepalive:true,
         mode:"no-cors"
       });
+      ok = true;
     }catch{}
   }
 
-  // Salto inmediato a Power BI (sin pasar por Apps Script)
-  setTimeout(()=>location.replace(dest), 60);
+  if(!ok){
+    // 3) último recurso: GET a doGet para que al menos cuente
+    try{
+      const u = `${TRACK_URL}?id=${encodeURIComponent(id)}&src=${encodeURIComponent("go_fallback")}`;
+      fetch(u, { method:"GET", mode:"no-cors", keepalive:true });
+    }catch{}
+  }
+
+  // Salto al PBI (pequeño delay para dar aire al beacon)
+  setTimeout(()=>location.replace(dest), 120);
 })();
 </script>
 </body>
 </html>
-
