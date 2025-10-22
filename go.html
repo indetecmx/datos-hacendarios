@@ -3,207 +3,107 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Abriendo reporte · Datos Hacendarios</title>
+<title>INDETEC · Apertura de reporte</title>
 <meta name="color-scheme" content="light dark">
+
+<link rel="dns-prefetch" href="https://script.google.com">
 <link rel="preconnect" href="https://script.google.com" crossorigin>
-<link rel="preconnect" href="https://app.powerbi.com" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
 <style>
-  :root{--bg:#0b0d12;--fg:#eaeef8;--muted:#98a0b3;--card:#121621;--accent:#6aa7ff;--warn:#ffcc66}
-  body{margin:0;background:var(--bg);color:var(--fg);font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100svh;display:grid;place-items:center}
-  .card{width:min(720px,94vw);background:var(--card);border:1px solid #22283a;border-radius:16px;padding:28px 24px;box-shadow:0 10px 30px rgba(0,0,0,.35);text-align:center}
-  .h1{font-size:22px;font-weight:800;margin:8px 0 6px}
-  .p{color:var(--muted);margin:0 0 18px}
-  .ok{color:#6fe391;font-weight:600;margin-top:12px}
-  .warn{color:var(--warn);font-weight:600;margin-top:12px}
-  .row{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
-  button{border:0;border-radius:10px;padding:12px 18px;cursor:pointer;font-weight:700}
-  .primary{background:var(--accent);color:#001a3d}
-  .ghost{background:#1a2235;color:var(--fg);border:1px solid #223050}
-  .spin{display:inline-block;width:26px;height:26px;border-radius:50%;
-        border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);
-        animation:rot 1s linear infinite;margin:10px auto}
-  @keyframes rot{to{transform:rotate(360deg)}}
-  .logos{display:flex;gap:16px;align-items:center;justify-content:center;opacity:.95;margin-bottom:4px}
-  .logos img{height:42px;object-fit:contain}
-  .ids{margin-top:16px;text-align:left;background:#0f1422;border:1px solid #223050;border-radius:12px;padding:12px;max-height:40vh;overflow:auto}
-  .ids b{color:#cfe2ff}
-  .idpill{display:inline-block;margin:6px 6px 0 0;padding:6px 10px;border:1px solid #2d3c5f;border-radius:999px;background:#162038;font-size:13px}
-  .idpill button{margin-left:8px;padding:2px 8px;border-radius:6px;font-weight:700}
+  :root{--bg:#0b0d12;--fg:#eaeef8;--muted:#9aa3b5;--accent:#2f6fed;--ok:#5bd19a}
+  @media (prefers-color-scheme:light){
+    :root{--bg:#f7f9fc;--fg:#0b0d12;--muted:#5b6476;--accent:#2f6fed;--ok:#10b981}
+  }
+  body{margin:0;padding:40px;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center}
+  h1{font-size:1.4rem;margin-bottom:10px}
+  .loader{border:4px solid rgba(0,0,0,.15);border-top:4px solid var(--accent);border-radius:50%;width:40px;height:40px;margin:18px auto;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ok{color:var(--ok);font-weight:600;margin-top:10px}
+  .meta{color:var(--muted);font-size:.9rem}
+  .foot{color:var(--muted);font-size:.85rem;margin-top:22px;line-height:1.4}
+  a.btn{display:inline-block;margin-top:20px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:12px;text-decoration:none;font-weight:600}
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logos">
-      <img src="https://cdn.jsdelivr.net/gh/TU-usuario/TU-repo@main/assets/datos_hacendarios.png" alt="Datos Hacendarios" onerror="this.style.display='none'">
-      <img src="https://cdn.jsdelivr.net/gh/TU-usuario/TU-repo@main/assets/indetec.png" alt="INDETEC" onerror="this.style.display='none'">
-    </div>
-    <div class="h1" id="title">Abriendo reporte</div>
-    <p class="p" id="subtitle">Conexión segura verificada.</p>
-    <div class="spin" id="spinner"></div>
-    <div class="ok" id="status">Enlace verificado correctamente.</div>
-
-    <div class="ids" id="helpBox" style="display:none">
-      <div class="warn" id="warnMsg">No se encontró el destino para este enlace.</div>
-      <p class="p" id="rSeen"></p>
-      <b>IDs válidos (haz click para copiar URL estable):</b>
-      <div id="idList"></div>
-    </div>
-
-    <div class="row">
-      <button class="primary" id="openBtn">Abrir ahora</button>
-      <button class="ghost" id="copyBtn">Copiar enlace estable</button>
-    </div>
-  </div>
+  <h1 id="titulo">Conectando con el servidor…</h1>
+  <p id="msg" class="meta">Verificando enlace seguro de Datos Hacendarios.</p>
+  <div class="loader" role="progressbar" aria-label="Cargando"></div>
+  <p class="ok" id="ok"></p>
+  <p class="foot">Este acceso se registra de forma anónima para fines estadísticos. No se recopila información personal ni sensible.</p>
 
 <script>
-/* ================== CATÁLOGO DE REPORTES ================== */
-/* Mantiene tus URLs actuales y agrega los "MAPAS_*". */
-const REPORTS = {
-  pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo para el periodo 2015 a 2024',url:'https://app.powerbi.com/view?r=eyJrIjoiNGJkYjJjNDItNjdjYS00YTg3LWE3YjUtZDMzYjUwZTMxNzlmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  pe_2000_2023:{name:'Presupuesto de egresos 2000 a 2023',url:'https://app.powerbi.com/view?r=eyJrIjoiMzgxODE4ZDEtYTRjNi00MDZiLTg1ZWMtMTkyNDMzMTlmNjc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  pe_entidades:{name:'Reporte del presupuesto de egresos por entidad federativa',url:'https://app.powerbi.com/view?r=eyJrIjoiMTk3YzZmMmQtZDA2OC00YTBlLWIwNWEtOWMwMWM2NTNjZWJhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  efipem_1989_2024:{name:'Estadísticas de finanzas públicas municipales y estatales. EFIPEM 1989-2024',url:'https://app.powerbi.com/view?r=eyJrIjoiNzg1MWNhM2UtNDFhNy00YzUyLWExZDEtMjkxMWRiNDE5MTEwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  cuentas_capitales:{name:'Cuentas públicas de los municipios capitales',url:'https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  leyes_2019_2025:{name:'Estadísticas de Leyes de Ingresos 2019-2025',url:'https://app.powerbi.com/view?r=eyJrIjoiNTlmZGZiYmQtMzYzNC00MzI0LTgzNTItZmU5NmFjMjU4MjAxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306'},
-  leyes_imp_2019_2025:{name:'Estadísticas de Leyes de Ingresos Impuestos 2019-2025',url:'https://app.powerbi.com/view?r=eyJrIjoiNDdlZGRlNDAtZGNlNC00NDBiLTk0YmQtYTBhMjUwM2NkOWMwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306'},
-  efipem_2023:{name:'Estadísticas de finanzas públicas municipales. EFIPEM 2023',url:'https://app.powerbi.com/view?r=eyJrIjoiODkzNTY5M2QtNjkxYy00MTNiLWJmNmYtNzM4ZTQ2ZGZhYzI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  efipem_1989_2023:{name:'Estadísticas de finanzas públicas municipales. EFIPEM 1989-2023',url:'https://app.powerbi.com/view?r=eyJrIjoiNmE2NTUwYmEtNzQwNC00OTU4LTk5NmMtYWFlZjVhMmY3MDUxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  deuda_municipal:{name:'Reporte de deuda pública municipal',url:'https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  balance_cp_2014_2024:{name:'Balance de Cuentas Públicas (2014-2024)',url:'https://app.powerbi.com/view?r=eyJrIjoiZjkzYmJkZWYtNTZkZi00NzMxLTkyMjItMjc2ZGRjMTVjMGQxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection'},
-  balance_proj_2025_2030:{name:'Balance de Ingresos y Egresos Proyectados 2025-2030',url:'https://app.powerbi.com/view?r=eyJrIjoiNGZkZmM5OGItNDljYi00MDExLWFlZTctNTMxZjRiZjEwMTVkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  balance_ldf_2017_2024:{name:'Balance de resultado de ingresos y egresos LDF 2017-2024',url:'https://app.powerbi.com/view?r=eyJrIjoiZWMzNjhlNzItZjFiZi00MGMwLWJmNzQtMjE1MDE1NWYwMDJiIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  eai_ldf:{name:'Estado Analítico de los Ingresos LDF',url:'https://app.powerbi.com/view?r=eyJrIjoiNWNjNmQ4YWMtNjNhMi00OTg1LWE4MDUtM2QwNThjZGU5MDI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_personal:{name:'Mapas de personal ocupado por actividad económica',url:'https://app.powerbi.com/view?r=eyJrIjoiMzY4NmVlNGEtN2M5Zi00OTM3LTkwMDMtYThmMWQ5NjU0ZTg0IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-
-  predial_potencial:{name:'Impuesto predial potencial',url:'https://app.powerbi.com/view?r=eyJrIjoiODkyYTUyMzMtNGQ2Yy00ZTBkLTlkNGYtYjM1MDA0MmEyNjI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  impuestos_potenciales:{name:'Impuestos potenciales',url:'https://app.powerbi.com/view?r=eyJrIjoiNjQwZWFmYmQtZGViNS00ZWNhLWJmZTYtYWVhZGY4NGQ0NTE5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSectionbc92482a221c92453c0d'},
-  pronosticos:{name:'Pronósticos',url:'https://app.powerbi.com/view?r=eyJrIjoiZTI0NzE1ODMtNzQ1Ni00MjA1LWFiMDEtMTRlYmY5MzU1ODAzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2Mw-LTIyMmZkMDU1NTZiNiJ9'.replace('-LTIy','-LTIy')},
-  mapas:{name:'Mapas',url:'https://app.powerbi.com/view?r=eyJrIjoiNjY3YTY4ZjItZjY0Mi00OWFiLWJlZmMtNmI0M2E4YjE4MGI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  indicadores:{name:'Indicadores',url:'https://app.powerbi.com/view?r=eyJrIjoiNzEzMGFlNzYtZDhkMS00ODhkLWJiMTEtMGU5YmFhYmUwNDA2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  panorama_hacienda:{name:'Panorama de la Hacienda Pública',url:'https://app.powerbi.com/view?r=eyJrIjoiYzczZWEwNWItNWNjNC00M2UyLTkyN2YtYTVkODE4NDczNjczIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  ambientales:{name:'Ambientales',url:'https://app.powerbi.com/view?r=eyJrIjoiODFkYjFkNWItMzg5Zi00YjA3LTlkMTUtMGE5NTI5MzUxNmE3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  deuda:{name:'Deuda',url:'https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  municipal:{name:'Municipal',url:'https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  derechos_agua:{name:'Derechos de agua potable',url:'https://app.powerbi.com/view?r=eyJrIjoiYzUyMjU1YjUtZDdjNy00MTQxLWE2NzgtN2MxNWJkZGRhZGMyIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  censos_eco24:{name:'Censos Económicos 2024',url:'https://app.powerbi.com/view?r=eyJrIjoiZDJkODBkZWUtNmE3MC00NDdjLWFkOTUtZGY2MDZlNGI0NTdjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-};
-
-/* === MAPAS: estatales === */
-const MAPAS_REPORTS = {
-  mapas_AGS:{name:'Mapas · AGS',url:'https://app.powerbi.com/view?r=eyJrIjoiNGYyN2ZmZGUtZmFlYS00NTBkLWIxZjEtZDg3ZTE1ZTA0YmM3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_BC:{name:'Mapas · BC',url:'https://app.powerbi.com/view?r=eyJrIjoiODI0MTNlNmItY2QzZS00MTVlLWFjMjEtMzIzYmU5M2NiYTVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_BCS:{name:'Mapas · BCS',url:'https://app.powerbi.com/view?r=eyJrIjoiZDUwMmExMDctOWQ0OC00ZWI4LWE1YmYtZGNmYWUxNjE4NWFkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_CAMP:{name:'Mapas · CAMP',url:'https://app.powerbi.com/view?r=eyJrIjoiZTYxZmFiODYtNTU5OC00YWZjLWEyYmItNTMxYWVlNDFlYzFlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_CHIS:{name:'Mapas · CHIS',url:'https://app.powerbi.com/view?r=eyJrIjoiMjRhNGE2ODItZDE1NC00YTllLWJiMmYtODI0OTU5NWQ1ZDA1IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_CHIH:{name:'Mapas · CHIH',url:'https://app.powerbi.com/view?r=eyJrIjoiNDM1MTg4ZmYtYWFjMC00MWM5LTk2NTAtYjgwN2Y3ZmJlNTI4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_COAH:{name:'Mapas · COAH',url:'https://app.powerbi.com/view?r=eyJrIjoiZjZhOWQzODAtMmYwMi00MmViLWEwNjItNzI5YTBjMjI1YzdlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_COL:{name:'Mapas · COL',url:'https://app.powerbi.com/view?r=eyJrIjoiZGM3MWIyNDEtNzI4OC00YmQ4LWE3MWYtMmQ0ZTllNTg1NTMxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_CDMX:{name:'Mapas · CDMX',url:'https://app.powerbi.com/view?r=eyJrIjoiYWRiMjhmNmQtMTBjNy00MmY5LWE2MDYtMjVmNjQ0N2JjODJhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_DGO:{name:'Mapas · DGO',url:'https://app.powerbi.com/view?r=eyJrIjoiNWYzNGNmOTktNDI4Ny00YTYyLThkYjktZjUxYjkxNjQ4NjAwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_GTO:{name:'Mapas · GTO',url:'https://app.powerbi.com/view?r=eyJrIjoiZTkzYWE5ZmQtN2ViNC00YjgzLThkNTYtMDdmNjhiMmNjYTExIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_GRO:{name:'Mapas · GRO',url:'https://app.powerbi.com/view?r=eyJrIjoiYTM2ZjNjNzUtZmM1MS00Y2U2LWExZDktOTFiN2I1ZDg3MmZiIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_HGO:{name:'Mapas · HGO',url:'https://app.powerbi.com/view?r=eyJrIjoiODY2NWIwZDItNzdhMC00MDAzLWE4ZWMtMDk4ZWMzODMwOWZhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_JAL:{name:'Mapas · JAL',url:'https://app.powerbi.com/view?r=eyJrIjoiOGQ0MzE4NzYtM2IyOS00ZTFiLWI5ZTctZjdjMjBiMjI2NDhmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_EDOMEX:{name:'Mapas · EDOMEX',url:'https://app.powerbi.com/view?r=eyJrIjoiODY1MzkzZTUtMDQ5Zi00NWJlLWIyZWQtNzkxYjRiYjU3Njk1IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_MICH:{name:'Mapas · MICH',url:'https://app.powerbi.com/view?r=eyJrIjoiMjRlN2U1YmQtMGZkYy00NWJiLTg2ZmUtYmU3YmVjNzY3ZWQxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_MOR:{name:'Mapas · MOR',url:'https://app.powerbi.com/view?r=eyJrIjoiYWNlYThiNWUtOTRmMC00YTk0LWI3YzktMmZlYmMwZWIwNzJlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_NAY:{name:'Mapas · NAY',url:'https://app.powerbi.com/view?r=eyJrIjoiZjY5MjM1ODUtNGY0ZC00Mzk2LWI5NGYtMjA4ODkxMWU1Yzc2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_NL:{name:'Mapas · NL',url:'https://app.powerbi.com/view?r=eyJrIjoiZjRlMDMyMjItMWM1NC00YjEyLTk4NTEtZDg1ZjRiNTZkOTVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_OAX:{name:'Mapas · OAX',url:'https://app.powerbi.com/view?r=eyJrIjoiZGEzYjA3ODMtOTcxZi00ZTFmLTk0M2ItYWQyMmU0OTlmZTRlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_SLP:{name:'Mapas · SLP',url:'https://app.powerbi.com/view?r=eyJrIjoiZjQzMTQxMDItZGNhZC00ZmRiLTk0MGQtOGZmNWFjM2ViODVhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_PUE:{name:'Mapas · PUE',url:'https://app.powerbi.com/view?r=eyJrIjoiMWYwNDY1NjgtZTNiOS00ZTRlLWJhODUtZDE2MGVkNjdhNjc2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_QRO:{name:'Mapas · QRO',url:'https://app.powerbi.com/view?r=eyJrIjoiNDFjYWI4NzgtMzJkMi00MWQ3LTgzYzMtMzc2ODVmNzg5MjdjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_QROO:{name:'Mapas · QROO',url:'https://app.powerbi.com/view?r=eyJrIjoiM2YzODNkNDEtMmUyYy00MDQ5LWJmZmEtZWIzMTBkNTRmOTA4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_SIN:{name:'Mapas · SIN',url:'https://app.powerbi.com/view?r=eyJrIjoiZWJmNzMyNTctMWJiYy00ZWYyLTg1YTItZjkzZTliY2JmNGFmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_SON:{name:'Mapas · SON',url:'https://app.powerbi.com/view?r=eyJrIjoiNjJiYzYzZjEtNTkwNy00NjVhLTg2MWUtYTJjMmVjODgwODY4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_TAB:{name:'Mapas · TAB',url:'https://app.powerbi.com/view?r=eyJrIjoiZjhmZGVhZDUtM2NkYS00NDIxLWI5ZTYtOWU0ZmY4MWE4ZTJkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_TAMPS:{name:'Mapas · TAMPS',url:'https://app.powerbi.com/view?r=eyJrIjoiMTdmODFmZDctMGY5ZS00N2U4LWE1YWMtYTBlYTI3MGY4MDc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_TLAX:{name:'Mapas · TLAX',url:'https://app.powerbi.com/view?r=eyJrIjoiMDQzNjk1YzktZGZhZC00ZTg5LWI4ZGMtMzEzZTk4MTJmOTBjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_VER:{name:'Mapas · VER',url:'https://app.powerbi.com/view?r=eyJrIjoiMjRlMDczYWEtMWZkNC00ZTI2LWJkM2EtZWZmNTA2Zjg1NTZjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_YC:{name:'Mapas · YC',url:'https://app.powerbi.com/view?r=eyJrIjoiNzNkMmUzYjctZWZhZC00NjQ5LWE3MTYtZWY3NWE0NmRmZTUzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-  mapas_ZAC:{name:'Mapas · ZAC',url:'https://app.powerbi.com/view?r=eyJrIjoiMWQ5YTI0NGYtNzg1ZS00NGVmLWIzNzMtZTU0YTg5YzI4ZWVjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'},
-};
-Object.assign(REPORTS, MAPAS_REPORTS);
-/* ========================================================= */
-
 (function(){
-  // === Config ===
-  const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwGhPQp8Oqph_ncKaUuHmOXzusartA4XhCSLDKUkGeI3LBCh8Z2EZtWRITrqAhY-ZFx/exec";
+  const DEPLOY_ID = "AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg";
+  const BASE = `https://script.google.com/macros/s/${DEPLOY_ID}/exec`;
 
-  // === Parámetros ===
-  const qs = new URLSearchParams(location.search);
-  const rRaw = (qs.get("r") || "").trim();
-  const r    = rRaw;                  // IDs son case-sensitive
-  const meta = REPORTS[r] || null;
-  const name = qs.get("name") || (meta ? meta.name : "Reporte");
-  const src  = qs.get("src")  || "direct";
-  const dest = meta ? meta.url : "";
+  const REPORTS = {
+    pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo (2015–2024)'},
+    pe_2000_2023:{name:'Presupuesto de egresos 2000–2023'},
+    pe_entidades:{name:'Presupuesto de egresos por entidad federativa'},
+    efipem_1989_2024:{name:'Estadísticas EFIPEM 1989–2024'},
+    cuentas_capitales:{name:'Cuentas públicas de municipios capitales'},
+    leyes_2019_2025:{name:'Estadísticas de Leyes de Ingresos 2019–2025'},
+    leyes_imp_2019_2025:{name:'Leyes de Ingresos – Impuestos 2019–2025'},
+    efipem_2023:{name:'EFIPEM 2023'},
+    efipem_1989_2023:{name:'EFIPEM 1989–2023'},
+    deuda_municipal:{name:'Deuda pública municipal'},
+    balance_cp_2014_2024:{name:'Balance de Cuentas Públicas 2014–2024'},
+    balance_proj_2025_2030:{name:'Proyecciones 2025–2030'},
+    balance_ldf_2017_2024:{name:'Balance LDF 2017–2024'},
+    eai_ldf:{name:'Estado Analítico de los Ingresos LDF'},
+    mapas_personal:{name:'Mapas de personal ocupado por actividad económica'},
+    predial_potencial:{name:'Impuesto Predial Potencial'},
+    impuestos_potenciales:{name:'Impuestos Potenciales'},
+    pronosticos:{name:'Pronósticos fiscales'},
+    mapas:{name:'Mapas'},
+    indicadores:{name:'Indicadores'},
+    panorama_hacienda:{name:'Panorama de la Hacienda Pública'},
+    ambientales:{name:'Ambientales'},
+    deuda:{name:'Deuda'},
+    municipal:{name:'Municipal'},
+    derechos_agua:{name:'Derechos de Agua Potable'},
+    censos_eco24:{name:'Censos Económicos 2024'},
+    // Mapas estatales
+    mapas_AGS:{name:'Mapas · Aguascalientes'}, mapas_BC:{name:'Mapas · Baja California'},
+    mapas_BCS:{name:'Mapas · Baja California Sur'}, mapas_CAMP:{name:'Mapas · Campeche'},
+    mapas_CHIS:{name:'Mapas · Chiapas'}, mapas_CHIH:{name:'Mapas · Chihuahua'},
+    mapas_COAH:{name:'Mapas · Coahuila'}, mapas_COL:{name:'Mapas · Colima'},
+    mapas_CDMX:{name:'Mapas · Ciudad de México'}, mapas_DGO:{name:'Mapas · Durango'},
+    mapas_GTO:{name:'Mapas · Guanajuato'}, mapas_GRO:{name:'Mapas · Guerrero'},
+    mapas_HGO:{name:'Mapas · Hidalgo'}, mapas_JAL:{name:'Mapas · Jalisco'},
+    mapas_EDOMEX:{name:'Mapas · Estado de México'}, mapas_MICH:{name:'Mapas · Michoacán'},
+    mapas_MOR:{name:'Mapas · Morelos'}, mapas_NAY:{name:'Mapas · Nayarit'},
+    mapas_NL:{name:'Mapas · Nuevo León'}, mapas_OAX:{name:'Mapas · Oaxaca'},
+    mapas_SLP:{name:'Mapas · San Luis Potosí'}, mapas_PUE:{name:'Mapas · Puebla'},
+    mapas_QRO:{name:'Mapas · Querétaro'}, mapas_QROO:{name:'Mapas · Quintana Roo'},
+    mapas_SIN:{name:'Mapas · Sinaloa'}, mapas_SON:{name:'Mapas · Sonora'},
+    mapas_TAB:{name:'Mapas · Tabasco'}, mapas_TAMPS:{name:'Mapas · Tamaulipas'},
+    mapas_TLAX:{name:'Mapas · Tlaxcala'}, mapas_VER:{name:'Mapas · Veracruz'},
+    mapas_YC:{name:'Mapas · Yucatán'}, mapas_ZAC:{name:'Mapas · Zacatecas'}
+  };
 
-  // Render básico
-  const $title  = document.getElementById("title");
-  const $sub    = document.getElementById("subtitle");
-  const $status = document.getElementById("status");
-  const $help   = document.getElementById("helpBox");
-  const $rSeen  = document.getElementById("rSeen");
-  const $idList = document.getElementById("idList");
-  $title.textContent = name;
-  $sub.textContent   = dest ? "Conexión segura a Power BI verificada."
-                            : "No se encontró el destino para este enlace.";
-
-  // Log no bloqueante
-  try{
-    fetch(GAS_ENDPOINT, {
-      method:"POST", mode:"no-cors",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({
-        r, name, src,
-        source: document.referrer || "",
-        userAgent: navigator.userAgent,
-        ts: Date.now()
-      })
-    });
-  }catch(_){} // silencioso
-
-  // Ayuda si r no existe
-  if(!dest){
-    $help.style.display = "block";
-    $rSeen.textContent = r ? ("r recibido: " + r) : "No se recibió parámetro r en el URL.";
-    const base = location.origin + location.pathname;
-    const makePill = (id) => {
-      const d = document.createElement("span");
-      d.className = "idpill";
-      d.textContent = id;
-      const b = document.createElement("button");
-      b.className = "ghost";
-      b.textContent = "Copiar";
-      b.onclick = async () => {
-        const stable = `${base}?r=${encodeURIComponent(id)}&src=direct&name=${encodeURIComponent(REPORTS[id].name)}`;
-        try{ await navigator.clipboard.writeText(stable); $status.textContent = "Enlace copiado al portapapeles."; }
-        catch{ prompt("Copia el enlace estable:", stable); }
-      };
-      d.appendChild(b);
-      return d;
-    };
-    Object.keys(REPORTS).forEach(id => $idList.appendChild(makePill(id)));
+  const p = new URLSearchParams(location.search);
+  const id = p.get("id");
+  if(!id){
+    document.getElementById("titulo").textContent = "Falta el parámetro ?id=";
+    document.getElementById("msg").textContent = "No se puede identificar el reporte.";
+    return;
   }
 
-  // Acciones
-  const open = () => {
-    if(!dest){ alert("Enlace no configurado: la clave 'r' no existe en el catálogo."); return; }
-    location.replace(dest);
-  };
-  document.getElementById("openBtn").onclick = open;
+  const name = REPORTS[id]?.name || id;
+  document.getElementById("titulo").textContent = "Abriendo reporte";
+  document.getElementById("msg").textContent = name;
+  document.getElementById("ok").textContent = "Enlace verificado correctamente.";
 
-  document.getElementById("copyBtn").onclick = async () => {
-    const stable = `${location.origin}${location.pathname}?r=${encodeURIComponent(r)}&src=${encodeURIComponent(src)}&name=${encodeURIComponent(name)}`;
-    try{ await navigator.clipboard.writeText(stable); $status.textContent = "Enlace copiado al portapapeles."; }
-    catch{ prompt("Copia el enlace estable:", stable); }
-  };
+  // Registrar clic (no bloqueante)
+  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
+  const payload = new Blob([JSON.stringify({r:id,name,src,ts:Date.now(),ua:navigator.userAgent})],{type:"application/json"});
+  navigator.sendBeacon(BASE,payload);
 
-  // Auto-open (desactiva comentando la línea)
-  if(dest) setTimeout(open, 1100);
+  // Redirigir tras breve pausa
+  setTimeout(()=>{location.replace(BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src));},1200);
 })();
 </script>
 </body>
 </html>
+
