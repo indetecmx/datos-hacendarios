@@ -3,158 +3,107 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>INDETEC · Abriendo reporte…</title>
+<title>Abriendo reporte · Datos Hacendarios</title>
 <meta name="color-scheme" content="light dark">
-
-<link rel="dns-prefetch" href="https://script.google.com">
 <link rel="preconnect" href="https://script.google.com" crossorigin>
-
 <style>
-  :root{
-    --bg:#0b0d12; --fg:#eaeef8; --muted:#9aa3b5; --accent:#2f6fed; --ok:#5bd19a; --card:#121621;
-  }
-  @media (prefers-color-scheme:light){
-    :root{ --bg:#f7f9fc; --fg:#0b0d12; --muted:#5b6476; --accent:#2f6fed; --ok:#10b981; --card:#ffffff; }
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; min-height:100svh; display:grid; place-items:center;
-    background:var(--bg); color:var(--fg);
-    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  }
-  .card{
-    width:min(760px,92vw); background:var(--card); border:1px solid rgba(255,255,255,.06);
-    border-radius:16px; padding:28px 24px; box-shadow:0 8px 40px rgba(0,0,0,.22);
-  }
-
-  /* ====== Logos “cuadrados” y centrados ====== */
-  .brand{display:grid; gap:10px; margin-bottom:10px; justify-items:center}
-  .logo-box{
-    width:min(640px,92%);                       /* ancho máximo */
-    height:72px;                                /* alto fijo para alinear */
-    display:grid; place-items:center;           /* centra el SVG en ambas direcciones */
-  }
-  .logo-box.small{height:48px;}                 /* segunda línea, más compacta */
-  .logo-box svg{max-width:100%; max-height:100%; display:block}
-
-  h1{font-size:1.25rem; margin:8px 0 4px; text-align:center}
-  .subtitle{color:var(--muted); text-align:center; margin:0 0 12px}
-  .name{font-size:1.05rem; font-weight:600; text-align:center; margin:4px 0}
-  .ok{color:var(--ok); font-weight:600; text-align:center; margin:8px 0 0}
-  .loader{
-    border:4px solid rgba(255,255,255,.15); border-top:4px solid var(--accent);
-    width:42px; height:42px; border-radius:50%; margin:16px auto; animation:spin 1s linear infinite;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px}
-  .btn{
-    padding:11px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.12);
-    background:transparent; color:var(--fg); text-decoration:none; cursor:pointer; min-width:160px; text-align:center;
-  }
-  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600}
+  :root{--bg:#0b0d12;--fg:#eaeef8;--muted:#98a0b3;--card:#121621;--accent:#6aa7ff}
+  body{margin:0;background:var(--bg);color:var(--fg);font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100svh;display:grid;place-items:center}
+  .card{width:min(560px,90vw);background:var(--card);border:1px solid #22283a;border-radius:16px;padding:28px 24px;box-shadow:0 10px 30px rgba(0,0,0,.35);text-align:center}
+  .h1{font-size:22px;font-weight:700;margin:8px 0 6px}
+  .p{color:var(--muted);margin:0 0 18px}
+  .ok{color:#6fe391;font-weight:600;margin-top:12px}
+  .row{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+  button{border:0;border-radius:10px;padding:12px 18px;cursor:pointer;font-weight:600}
+  .primary{background:var(--accent);color:#001a3d}
+  .ghost{background:#1a2235;color:var(--fg);border:1px solid #223050}
+  .spin{display:inline-block;width:26px;height:26px;border-radius:50%;
+        border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);
+        animation:rot 1s linear infinite;margin:10px auto}
+  @keyframes rot{to{transform:rotate(360deg)}}
+  .logos{display:flex;gap:16px;align-items:center;justify-content:center;opacity:.95}
+  .logos img{height:42px;object-fit:contain}
 </style>
 </head>
 <body>
-<main class="card">
-  <div class="brand" aria-hidden="true">
-    <!-- Logo Datos Hacendarios -->
-    <div class="logo-box">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1989 673">
-        <path fill="#007a3d" d="M71 51h278c208 0 377 169 377 377S557 805 349 805H71Z" transform="translate(-71 -132)"/>
-        <path fill="#fff" d="M242 287h67v366h-67Zm143 113h67v140h-67Zm139-113h67v366h-67Z" transform="translate(-71 -132)"/>
-        <text x="600" y="250" font-family="Segoe UI, sans-serif" font-size="210" fill="#707070">Datos</text>
-        <text x="600" y="480" font-family="Segoe UI, sans-serif" font-size="210" fill="#707070">Hacendarios</text>
-        <rect x="590" y="520" width="1370" height="16" fill="#007a3d"/>
-        <text x="1600" y="640" font-family="Segoe UI, sans-serif" font-size="180" fill="#707070">Indetec</text>
-      </svg>
+  <div class="card">
+    <div class="logos">
+      <img src="https://raw.githubusercontent.com/TU-usuario/TU-repo/main/assets/datos_hacendarios.png" alt="Datos Hacendarios">
+      <img src="https://raw.githubusercontent.com/TU-usuario/TU-repo/main/assets/indetec.png" alt="INDETEC">
     </div>
-    <!-- Logo INDETEC -->
-    <div class="logo-box small">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 765">
-        <path fill="#007a3d" d="M447 707c-182-33-271-190-200-501C283 97 333-4 333-4s141 75 197 355c-64 94-229 345-83 466-29-11-59-31-77-62 61-44 91-89 109-150 64 7 124 60 124 60s-68 77-155 109c-40-19-64-44-74-77z"/>
-        <text x="500" y="570" font-size="430" font-family="Segoe UI, sans-serif" fill="#777">Indetec</text>
-        <text x="650" y="670" font-size="75" font-family="Segoe UI, sans-serif" fill="#777">Instituto para el Desarrollo Técnico de las Haciendas Públicas</text>
-      </svg>
+    <div class="h1" id="title">Abriendo reporte</div>
+    <p class="p" id="subtitle">Conexión segura verificada.</p>
+    <div class="spin" id="spinner"></div>
+    <div class="ok" id="status">Enlace verificado correctamente.</div>
+    <div class="row">
+      <button class="primary" id="openBtn">Abrir ahora</button>
+      <button class="ghost" id="copyBtn">Copiar enlace estable</button>
     </div>
   </div>
-
-  <h1 id="titulo">Abriendo reporte</h1>
-  <p class="subtitle">Conexión segura a Power BI verificada.</p>
-  <p class="name" id="nombre">—</p>
-
-  <div class="loader" role="progressbar" aria-label="Cargando"></div>
-  <p class="ok" id="ok">Enlace verificado correctamente.</p>
-
-  <div class="actions">
-    <a id="btnAbrir" class="btn primary" href="#">Abrir ahora</a>
-    <button id="btnCopiar" class="btn" type="button">Copiar enlace estable</button>
-  </div>
-</main>
 
 <script>
 (function(){
-  const DEPLOY_ID = "AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg";
-  const BASE = `https://script.google.com/macros/s/${DEPLOY_ID}/exec`;
-
-  // Catálogo para mostrar nombre legible (no mapea destinos; eso lo resuelve Apps Script)
-  const REPORTS = {
-    pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo (2015–2024)'},
-    pe_2000_2023:{name:'Presupuesto de egresos 2000–2023'},
-    pe_entidades:{name:'Presupuesto de egresos por entidad federativa'},
-    efipem_1989_2024:{name:'EFIPEM 1989–2024'},
-    cuentas_capitales:{name:'Cuentas públicas de municipios capitales'},
-    leyes_2019_2025:{name:'Leyes de Ingresos 2019–2025'},
-    leyes_imp_2019_2025:{name:'Leyes de Ingresos – Impuestos 2019–2025'},
-    efipem_2023:{name:'EFIPEM 2023'},
-    efipem_1989_2023:{name:'EFIPEM 1989–2023'},
-    deuda_municipal:{name:'Deuda pública municipal'},
-    balance_cp_2014_2024:{name:'Balance de Cuentas Públicas 2014–2024'},
-    balance_proj_2025_2030:{name:'Balance proyectado 2025–2030'},
-    balance_ldf_2017_2024:{name:'Balance LDF 2017–2024'},
-    eai_ldf:{name:'Estado Analítico de los Ingresos (LDF)'},
-    mapas_personal:{name:'Mapas de personal ocupado por actividad económica'},
-    predial_potencial:{name:'Impuesto predial potencial'},
-    impuestos_potenciales:{name:'Impuestos potenciales'},
-    pronosticos:{name:'Pronósticos'},
-    mapas:{name:'Mapas'},
-    indicadores:{name:'Indicadores'},
-    panorama_hacienda:{name:'Panorama de la Hacienda Pública'},
-    ambientales:{name:'Ambientales'},
-    deuda:{name:'Deuda'},
-    municipal:{name:'Municipal'},
-    derechos_agua:{name:'Derechos de agua potable'},
-    censos_eco24:{name:'Censos Económicos 2024'}
-    // (Si quieres, aquí podrías añadir los “mapas_XXX” solo para mostrar nombres)
+  // === Config ===
+  const GAS_ENDPOINT = "https://script.google.com/macros/s/TU_DEPLOY_ID/exec"; // doPost
+  // Mapa de IDs 'r' -> URL final de Power BI
+  const ROUTES = {
+    derechos_agua_hist: "https://app.powerbi.com/view?r=XXXX",
+    derechos_agua_est:  "https://app.powerbi.com/view?r=YYYY",
+    derechos_agua_mun:  "https://app.powerbi.com/view?r=ZZZZ",
+    // ... añade todos tus IDs aquí
   };
 
-  const $ = s => document.querySelector(s);
-  const params = new URLSearchParams(location.search);
-  const id = params.get("id") || "";
-  const name = REPORTS[id]?.name || id.replace(/_/g,' ').replace(/\b\w/g,m=>m.toUpperCase());
+  // === Utilidades ===
+  const qs = new URLSearchParams(location.search);
+  const r    = qs.get("r") || "";
+  const name = qs.get("name") || "Reporte";
+  const src  = qs.get("src")  || "direct";
+  const dest = ROUTES[r];
 
-  $("#nombre").textContent = name || "Reporte";
+  // Render
+  document.getElementById("title").textContent = name;
+  document.getElementById("subtitle").textContent = dest
+      ? "Conexión segura a Power BI verificada."
+      : "No se encontró el destino para este enlace.";
 
-  // Copiar enlace estable (go.html?id=...)
-  $("#btnCopiar").addEventListener("click", async () => {
-    const share = new URL(location.href);
-    share.search = ""; // limpio
-    share.pathname = share.pathname.replace(/[^/]+$/, "go.html");
-    share.searchParams.set("id", id);
+  // Log de vista (no bloqueante)
+  try {
+    fetch(GAS_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        r, name, src,
+        source: document.referrer || "",
+        userAgent: navigator.userAgent,
+        ts: Date.now()
+      })
+    });
+  } catch(e){ /* silencio elegante */ }
+
+  // Acciones
+  const open = () => {
+    if(!dest){ alert("Enlace no configurado (r desconocido)."); return; }
+    location.href = dest;
+  };
+  document.getElementById("openBtn").onclick = open;
+
+  document.getElementById("copyBtn").onclick = async () => {
+    const stable = location.origin + location.pathname + "?name=" +
+      encodeURIComponent(name) + "&src=" + encodeURIComponent(src) + "&r=" + encodeURIComponent(r);
     try{
-      await navigator.clipboard.writeText(share.toString());
-      const b=$("#btnCopiar"); b.textContent="Enlace copiado"; setTimeout(()=>b.textContent="Copiar enlace estable",1400);
-    }catch{}
-  });
+      await navigator.clipboard.writeText(stable);
+      document.getElementById("status").textContent = "Enlace copiado al portapapeles.";
+    }catch(_){
+      prompt("Copia el enlace estable:", stable);
+    }
+  };
 
-  // Lanzar redirección inmediata y preparar botón de respaldo
-  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
-  const dest = BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src);
-  $("#btnAbrir").setAttribute("href", dest);
-  location.replace(dest);
+  // Auto-open opcional tras 1.2s (comenta si no lo quieres)
+  setTimeout(() => { if(dest) open(); }, 1200);
 })();
 </script>
 </body>
 </html>
 
-</html>
 
