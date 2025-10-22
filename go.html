@@ -63,7 +63,6 @@
     municipal:{name:'Municipal'},
     derechos_agua:{name:'Derechos de Agua Potable'},
     censos_eco24:{name:'Censos Económicos 2024'},
-    // Mapas estatales
     mapas_AGS:{name:'Mapas · Aguascalientes'}, mapas_BC:{name:'Mapas · Baja California'},
     mapas_BCS:{name:'Mapas · Baja California Sur'}, mapas_CAMP:{name:'Mapas · Campeche'},
     mapas_CHIS:{name:'Mapas · Chiapas'}, mapas_CHIH:{name:'Mapas · Chihuahua'},
@@ -82,10 +81,11 @@
     mapas_YC:{name:'Mapas · Yucatán'}, mapas_ZAC:{name:'Mapas · Zacatecas'}
   };
 
-  const p = new URLSearchParams(location.search);
-  const id = p.get("id");
+  // LEE ?id= O ?r=
+  const qs = new URLSearchParams(location.search);
+  const id = qs.get("id") || qs.get("r");
   if(!id){
-    document.getElementById("titulo").textContent = "Falta el parámetro ?id=";
+    document.getElementById("titulo").textContent = "Falta el parámetro ?id= o ?r=";
     document.getElementById("msg").textContent = "No se puede identificar el reporte.";
     return;
   }
@@ -95,13 +95,20 @@
   document.getElementById("msg").textContent = name;
   document.getElementById("ok").textContent = "Enlace verificado correctamente.";
 
-  // Registrar clic (no bloqueante)
-  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
-  const payload = new Blob([JSON.stringify({r:id,name,src,ts:Date.now(),ua:navigator.userAgent})],{type:"application/json"});
-  navigator.sendBeacon(BASE,payload);
+  // Redirección (tu Apps Script espera r=)
+  const src = location.origin + location.pathname + "?r=" + encodeURIComponent(id);
+  const dest = BASE + "?r=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src);
 
-  // Redirigir tras breve pausa
-  setTimeout(()=>{location.replace(BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src));},1200);
+  // Registro no bloqueante (opcional)
+  try{
+    const payload = new Blob([JSON.stringify({r:id,name,src,ts:Date.now(),ua:navigator.userAgent})],{type:"application/json"});
+    navigator.sendBeacon(BASE, payload);
+  }catch{}
+
+  // Botón de respaldo y salto inmediato
+  const a = document.getElementById("btnAbrir");
+  if(a) a.href = dest;
+  location.replace(dest);
 })();
 </script>
 </body>
