@@ -29,11 +29,13 @@
   <p id="msg" class="meta">Verificando enlace seguro de Datos Hacendarios.</p>
   <div class="loader" role="progressbar" aria-label="Cargando"></div>
   <p class="ok" id="ok"></p>
+  <a id="btnAbrir" class="btn" style="display:none" rel="noopener">Abrir ahora</a>
   <p class="foot">Este acceso se registra de forma anónima para fines estadísticos. No se recopila información personal ni sensible.</p>
 
 <script>
 (function(){
-  const DEPLOY_ID = "AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg";
+  // Usa el MISMO deployment que en index.html (unifica IDs)
+  const DEPLOY_ID = "AKfycbwGhPQp8Oqph_ncKaUuHmOXzusartA4XhCSLDKUkGeI3LBCh8Z2EZtWRITrqAhY-ZFx"; // <— unifica aquí
   const BASE = `https://script.google.com/macros/s/${DEPLOY_ID}/exec`;
 
   const REPORTS = {
@@ -81,11 +83,11 @@
     mapas_YC:{name:'Mapas · Yucatán'}, mapas_ZAC:{name:'Mapas · Zacatecas'}
   };
 
-  // LEE ?id= O ?r=
+  // LEE ?id= O ?r= (aceptamos ambos por compatibilidad)
   const qs = new URLSearchParams(location.search);
   const id = qs.get("id") || qs.get("r");
   if(!id){
-    document.getElementById("titulo").textContent = "Falta el parámetro ?id= o ?r=";
+    document.getElementById("titulo").textContent = "Falta el parámetro ?id= (o ?r=)";
     document.getElementById("msg").textContent = "No se puede identificar el reporte.";
     return;
   }
@@ -95,22 +97,26 @@
   document.getElementById("msg").textContent = name;
   document.getElementById("ok").textContent = "Enlace verificado correctamente.";
 
-  // Redirección (tu Apps Script espera r=)
-  const src = location.origin + location.pathname + "?r=" + encodeURIComponent(id);
-  const dest = BASE + "?r=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src);
+  // Redirección — tu Apps Script doGet espera **id**, no r
+  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
+  const dest = BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src);
 
-  // Registro no bloqueante (opcional)
+  // Registro no bloqueante (doPost) — usa 'userAgent' para cuadrar con tu hoja
   try{
-    const payload = new Blob([JSON.stringify({r:id,name,src,ts:Date.now(),ua:navigator.userAgent})],{type:"application/json"});
+    const payload = new Blob([JSON.stringify({
+      r:id, name, src, ts:Date.now(), userAgent:navigator.userAgent, source:"go_html"
+    })],{type:"application/json"});
     navigator.sendBeacon(BASE, payload);
   }catch{}
 
-  // Botón de respaldo y salto inmediato
+  // Botón de respaldo visible y salto inmediato
   const a = document.getElementById("btnAbrir");
-  if(a) a.href = dest;
-  location.replace(dest);
+  a.style.display = "inline-block";
+  a.href = dest;
+
+  // Redirección inmediata con fallback
+  try{ location.replace(dest); } catch{ location.href = dest; }
 })();
 </script>
 </body>
 </html>
-
