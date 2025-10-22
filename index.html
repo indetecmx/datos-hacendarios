@@ -36,10 +36,12 @@
   .meta{display:flex;gap:8px;flex-wrap:wrap}
   .tag{font-size:.75rem;color:var(--muted);padding:2px 8px;border:1px solid var(--border);border-radius:999px}
   .actions{display:flex;gap:8px;margin-top:auto}
-  .a{flex:1;text-align:center;text-decoration:none;border:1px solid var(--border);border-radius:10px;padding:9px}
+  .a{flex:1;text-align:center;text-decoration:none;border:1px solid var(--border);border-radius:10px;padding:9px;cursor:pointer}
   .a.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   .hint{color:var(--muted);font-size:.85rem}
   .empty{padding:24px;color:var(--muted)}
+  .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 12px;border-radius:10px;font-size:.9rem;opacity:0;transition:opacity .2s}
+  .toast.show{opacity:.9}
 </style>
 </head>
 <body>
@@ -57,31 +59,11 @@
 
 <main>
   <div class="wrap">
-    <!-- 🧾 Contenido ESTÁTICO mínimo (fallback) -->
+    <!-- 🧾 Fallback estático mínimo -->
     <div id="static" class="grid">
       <article class="card"><h3 class="title">Pronósticos</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('pronosticos')">Abrir</a></div></article>
       <article class="card"><h3 class="title">Impuestos potenciales</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('impuestos_potenciales')">Abrir</a></div></article>
       <article class="card"><h3 class="title">Mapas</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('mapas')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Indicadores</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('indicadores')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Panorama de la Hacienda Pública</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('panorama_hacienda')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Ambientales</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('ambientales')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Deuda</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('deuda')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Municipal</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('municipal')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">PE por capítulo 2015–2024</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('pe_cap_2015_2024')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">PE 2000–2023</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('pe_2000_2023')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">PE por entidad</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('pe_entidades')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">EFIPEM 1989–2024</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('efipem_1989_2024')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">EFIPEM 1989–2023</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('efipem_1989_2023')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">EFIPEM 2023</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('efipem_2023')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Cuentas públicas (capitales)</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('cuentas_capitales')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Balance CP 2014–2024</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('balance_cp_2014_2024')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Balance proyectado 2025–2030</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('balance_proj_2025_2030')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Balance LDF 2017–2024</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('balance_ldf_2017_2024')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Estado Analítico de Ingresos (LDF)</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('eai_ldf')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Mapas de personal ocupado</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('mapas_personal')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Impuesto predial potencial</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('predial_potencial')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Derechos de agua potable</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('derechos_agua')">Abrir</a></div></article>
-      <article class="card"><h3 class="title">Censos Económicos 2024</h3><div class="meta"><span class="tag">PBI</span></div><div class="actions"><a class="a primary" href="#" onclick="return openReport('censos_eco24')">Abrir</a></div></article>
     </div>
 
     <div id="app" hidden></div>
@@ -89,13 +71,15 @@
   </div>
 </main>
 
+<div id="toast" class="toast" role="status" aria-live="polite">Copiado</div>
+
 <script defer>
 /* ====== CONFIGURACIÓN ====== */
 
 // URL de tu Apps Script (ejecución pública) para registrar clics
 const TRACK_URL = "https://script.google.com/macros/s/AKfycbwGhPQp8Oqph_ncKaUuHmOXzusartA4XhCSLDKUkGeI3LBCh8Z2EZtWRITrqAhY-ZFx/exec";
 
-// Catálogo (id → nombre) — SIN URLs aquí
+// Catálogo (id → nombre) — sin URLs aquí
 const REPORTS = {
   pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo para el periodo 2015 a 2024'},
   pe_2000_2023:{name:'Presupuesto de egresos 2000 a 2023'},
@@ -126,7 +110,7 @@ const REPORTS = {
 
   /* Mapas por estado */
   mapas_AGS:{ name:'Mapas · AGS' },
-  mapas_BC:{  name:'Mapas · BC' },
+  mapas_BC:{  name:'Mapas · BC'  },
   mapas_BCS:{ name:'Mapas · BCS' },
   mapas_CAMP:{name:'Mapas · CAMP'},
   mapas_CHIS:{name:'Mapas · CHIS'},
@@ -155,40 +139,38 @@ const REPORTS = {
   mapas_TAMPS:{name:'Mapas · TAMPS'},
   mapas_TLAX:{name:'Mapas · TLAX'},
   mapas_VER:{ name:'Mapas · VER' },
-  mapas_YC:{  name:'Mapas · YC'  },
+  mapas_YUC:{ name:'Mapas · YUC' },  /* <- alineado con tu Apps Script */
   mapas_ZAC:{ name:'Mapas · ZAC' }
 };
 
 // Destinos (id → URL final en Power BI)
 const TARGETS = {
-  pe_cap_2015_2024: "https://app.powerbi.com/view?r=eyJrIjoiNGJkYjJjNDItNjdjYS00YTg3LWE3YjUtZDMzYjUwZTMxNzlmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  pe_2000_2023: "https://app.powerbi.com/view?r=eyJrIjoiMzgxODE4ZDEtYTRjNi00MDZiLTg1ZWMtMTkyNDMzMTlmNjc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  pe_entidades: "https://app.powerbi.com/view?r=eyJrIjoiMTk3YzZmMmQtZDA2OC00YTBlLWIwNWEtOWMwMWM2NTNjZWJhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  efipem_1989_2024: "https://app.powerbi.com/view?r=eyJrIjoiNzg1MWNhM2UtNDFhNy00YzUyLWExZDEtMjkxMWRiNDE5MTEwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  cuentas_capitales: "https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  leyes_2019_2025: "https://app.powerbi.com/view?r=eyJrIjoiNTlmZGZiYmQtMzYzNC00MzI0LTgzNTItZmU5NmFjMjU4MjAxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
-  leyes_imp_2019_2025: "https://app.powerbi.com/view?r=eyJrIjoiNDdlZGRlNDAtZGNlNC00NDBiLTk0YmQtYTBhMjUwM2NkOWMwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
-  efipem_2023: "https://app.powerbi.com/view?r=eyJrIjoiODkzNTY5M2QtNjkxYy00MTNiLWJmNmYtNzM4ZTQ2ZGZhYzI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  efipem_1989_2023: "https://app.powerbi.com/view?r=eyJrIjoiNmE2NTUwYmEtNzQwNC00OTU4LTk5NmMtYWFlZjVhMmY3MDUxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  deuda_municipal: "https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  balance_cp_2014_2024: "https://app.powerbi.com/view?r=eyJrIjoiZjkzYmJkZWYtNTZkZi00NzMxLTkyMjItMjc2ZGRjMTVjMGQxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection",
-  balance_proj_2025_2030: "https://app.powerbi.com/view?r=eyJrIjoiNGZkZmM5OGItNDljYi00MDExLWFlZTctNTMxZjRiZjEwMTVkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  balance_ldf_2017_2024: "https://app.powerbi.com/view?r=eyJrIjoiZWMzNjhlNzItZjFiZi00MGMwLWJmNzQtMjE1MDE1NWYwMDJiIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  eai_ldf: "https://app.powerbi.com/view?r=eyJrIjoiNWNjNmQ4YWMtNjNhMi00OTg1LWE4MDUtM2QwNThjZGU5MDI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_personal: "https://app.powerbi.com/view?r=eyJrIjoiMzY4NmVlNGEtN2M5Zi00OTM3LTkwMDMtYThmMWQ5NjU0ZTg0IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  predial_potencial: "https://app.powerbi.com/view?r=eyJrIjoiODkyYTUyMzMtNGQ2Yy00ZTBkLTlkNGYtYjM1MDA0MmEyNjI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  impuestos_potenciales: "https://app.powerbi.com/view?r=eyJrIjoiNjQwZWFmYmQtZGViNS00ZWNhLWJmZTYtYWVhZGY4NGQ0NTE5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSectionbc92482a221c92453c0d",
-  pronosticos: "https://app.powerbi.com/view?r=eyJrIjoiZTI0NzE1ODMtNzQ1Ni00MjA1LWFiMDEtMTRlYmY5MzU1ODAzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas: "https://app.powerbi.com/view?r=eyJrIjoiNjY3YTY4ZjItZjY0Mi00OWFiLWJlZmMtNmI0M2E4YjE4MGI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  indicadores: "https://app.powerbi.com/view?r=eyJrIjoiNzEzMGFlNzYtZDhkMS00ODhkLWJiMTEtMGU5YmFhYmUwNDA2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  panorama_hacienda: "https://app.powerbi.com/view?r=eyJrIjoiYzczZWEwNWItNWNjNC00M2UyLTkyN2YtYTVkODE4NDczNjczIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  ambientales: "https://app.powerbi.com/view?r=eyJrIjoiODFkYjFkNWItMzg5Zi00YjA3LTlkMTUtMGE5NTI5MzUxNmE3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  deuda: "https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  municipal: "https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  derechos_agua: "https://app.powerbi.com/view?r=eyJrIjoiYzUyMjU1YjUtZDdjNy00MTQxLWE2NzgtN2MxNWJkZGRhZGMyIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  censos_eco24: "https://app.powerbi.com/view?r=eyJrIjoiZDJkODBkZWUtNmE3MC00NDdjLWFkOTUtZGY2MDZlNGI0NTdjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  /* Mapas por estado (URLs que me pasaste) */
+  pe_cap_2015_2024:"https://app.powerbi.com/view?r=eyJrIjoiNGJkYjJjNDItNjdjYS00YTg3LWE3YjUtZDMzYjUwZTMxNzlmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  pe_2000_2023:"https://app.powerbi.com/view?r=eyJrIjoiMzgxODE4ZDEtYTRjNi00MDZiLTg1ZWMtMTkyNDMzMTlmNjc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  pe_entidades:"https://app.powerbi.com/view?r=eyJrIjoiMTk3YzZmMmQtZDA2OC00YTBlLWIwNWEtOWMwMWM2NTNjZWJhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  efipem_1989_2024:"https://app.powerbi.com/view?r=eyJrIjoiNzg1MWNhM2UtNDFhNy00YzUyLWExZDEtMjkxMWRiNDE5MTEwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  cuentas_capitales:"https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  leyes_2019_2025:"https://app.powerbi.com/view?r=eyJrIjoiNTlmZGZiYmQtMzYzNC00MzI0LTgzNTItZmU5NmFjMjU4MjAxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
+  leyes_imp_2019_2025:"https://app.powerbi.com/view?r=eyJrIjoiNDdlZGRlNDAtZGNlNC00NDBiLTk0YmQtYTBhMjUwM2NkOWMwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
+  efipem_2023:"https://app.powerbi.com/view?r=eyJrIjoiODkzNTY5M2QtNjkxYy00MTNiLWJmNmYtNzM4ZTQ2ZGZhYzI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  efipem_1989_2023:"https://app.powerbi.com/view?r=eyJrIjoiNmE2NTUwYmEtNzQwNC00OTU4LTk5NmMtYWFlZjVhMmY3MDUxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  deuda_municipal:"https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  balance_cp_2014_2024:"https://app.powerbi.com/view?r=eyJrIjoiZjkzYmJkZWYtNTZkZi00NzMxLTkyMjItMjc2ZGRjMTVjMGQxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection",
+  balance_proj_2025_2030:"https://app.powerbi.com/view?r=eyJrIjoiNGZkZmM5OGItNDljYi00MDExLWFlZTctNTMxZjRiZjEwMTVkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  balance_ldf_2017_2024:"https://app.powerbi.com/view?r=eyJrIjoiZWMzNjhlNzItZjFiZi00MGMwLWJmNzQtMjE1MDE1NWYwMDJiIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  eai_ldf:"https://app.powerbi.com/view?r=eyJrIjoiNWNjNmQ4YWMtNjNhMi00OTg1LWE4MDUtM2QwNThjZGU5MDI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  mapas_personal:"https://app.powerbi.com/view?r=eyJrIjoiMzY4NmVlNGEtN2M5Zi00OTM3LTkwMDMtYThmMWQ5NjU0ZTg0IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  predial_potencial:"https://app.powerbi.com/view?r=eyJrIjoiODkyYTUyMzMtNGQ2Yy00ZTBkLTlkNGYtYjM1MDA0MmEyNjI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  impuestos_potenciales:"https://app.powerbi.com/view?r=eyJrIjoiNjQwZWFmYmQtZGViNS00ZWNhLWJmZTYtYWVhZGY4NGQ0NTE5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSectionbc92482a221c92453c0d",
+  pronosticos:"https://app.powerbi.com/view?r=eyJrIjoiZTI0NzE1ODMtNzQ1Ni00MjA1LWFiMDEtMTRlYmY5MzU1ODAzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  mapas:"https://app.powerbi.com/view?r=eyJrIjoiNjY3YTY4ZjItZjY0Mi00OWFiLWJlZmMtNmI0M2E4YjE4MGI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  indicadores:"https://app.powerbi.com/view?r=eyJrIjoiNzEzMGFlNzYtZDhkMS00ODhkLWJiMTEtMGU5YmFhYmUwNDA2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  panorama_hacienda:"https://app.powerbi.com/view?r=eyJrIjoiYzczZWEwNWItNWNjNC00M2UyLTkyN2YtYTVkODE4NDczNjczIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  ambientales:"https://app.powerbi.com/view?r=eyJrIjoiODFkYjFkNWItMzg5Zi00YjA3LTlkMTUtMGE5NTI5MzUxNmE3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  deuda:"https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  municipal:"https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  derechos_agua:"https://app.powerbi.com/view?r=eyJrIjoiYzUyMjU1YjUtZDdjNy00MTQxLWE2NzgtN2MxNWJkZGRhZGMyIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
+  censos_eco24:"https://app.powerbi.com/view?r=eyJrIjoiZDJkODBkZWUtNmE3MC00NDdjLWFkOTUtZGY2MDZlNGI0NTdjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
   mapas_AGS:'https://app.powerbi.com/view?r=eyJrIjoiNGYyN2ZmZGUtZmFlYS00NTBkLWIxZjEtZDg3ZTE1ZTA0YmM3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
   mapas_BC:'https://app.powerbi.com/view?r=eyJrIjoiODI0MTNlNmItY2QzZS00MTVlLWFjMjEtMzIzYmU5M2NiYTVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
   mapas_BCS:'https://app.powerbi.com/view?r=eyJrIjoiZDUwMmExMDctOWQ0OC00ZWI4LWE1YmYtZGNmYWUxNjE4NWFkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
@@ -219,16 +201,16 @@ const TARGETS = {
   mapas_TAMPS:'https://app.powerbi.com/view?r=eyJrIjoiMTdmODFmZDctMGY5ZS00N2U4LWE1YWMtYTBlYTI3MGY4MDc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
   mapas_TLAX:'https://app.powerbi.com/view?r=eyJrIjoiMDQzNjk1YzktZGZhZC00ZTg5LWI4ZGMtMzEzZTk4MTJmOTBjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
   mapas_VER:'https://app.powerbi.com/view?r=eyJrIjoiMjRlMDczYWEtMWZkNC00ZTI2LWJkM2EtZWZmNTA2Zjg1NTZjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
-  mapas_YC:'https://app.powerbi.com/view?r=eyJrIjoiNzNkMmUzYjctZWZhZC00NjQ5LWE3MTYtZWY3NWE0NmRmZTUzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+  mapas_YUC:'https://app.powerbi.com/view?r=eyJrIjoiNzNkMmUzYjctZWZhZC00NjQ5LWE3MTYtZWY3NWE0NmRmZTUzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
   mapas_ZAC:'https://app.powerbi.com/view?r=eyJrIjoiMWQ5YTI0NGYtNzg1ZS00NGVmLWIzNzMtZTU0YTg5YzI4ZWVjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'
 };
 
 /* ====== LÓGICA UI ====== */
-
 const q=document.getElementById('q');
 const btnGroup=document.getElementById('toggleGroup');
 const btnIds=document.getElementById('toggleIds');
 const app=document.getElementById('app');
+const toast=document.getElementById('toast');
 let grouped=true, showIds=false;
 
 function categorize(id,name){
@@ -250,6 +232,12 @@ function categorize(id,name){
 }
 function esc(s){ return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 1200);
+}
+
 function card(it){
   const link = TARGETS[it.id] || "#";
   return `<article class="card">
@@ -257,9 +245,9 @@ function card(it){
     ${showIds?`<div class="id">${it.id}</div>`:''}
     <div class="meta"><span class="tag">PBI</span><span class="tag">${esc(it.cat)}</span></div>
     <div class="actions">
-      <a class="a" href="${link}" onclick="return openReport('${it.id}')" rel="noopener">Abrir</a>
-      <button class="a" type="button" onclick="navigator.clipboard.writeText('${link}')">Copiar</button>
-      <a class="a primary" href="${link}" onclick="return openReport('${it.id}')" rel="noopener">Ir ahora</a>
+      <a class="a" href="${link}" onclick="return openReport('${it.id}')" rel="noopener noreferrer">Abrir</a>
+      <button class="a" type="button" onclick="return copyLink('${it.id}')">Copiar</button>
+      <a class="a primary" href="${link}" onclick="return openReport('${it.id}')" rel="noopener noreferrer">Ir ahora</a>
     </div>
   </article>`;
 }
@@ -290,9 +278,7 @@ btnGroup.addEventListener("click",()=>{grouped=!grouped;btnGroup.setAttribute("a
 btnIds.addEventListener("click",()=>{showIds=!showIds;btnIds.setAttribute("aria-pressed",String(showIds));render();});
 window.addEventListener('DOMContentLoaded', render, {once:true});
 
-/* ====== TRACKING SIN BLOQUEO ======
-   Registra el clic con sendBeacon y navega al destino de inmediato.
-====================================*/
+/* ====== TRACKING SIN BLOQUEO ====== */
 function openReport(id){
   const target = TARGETS[id];
   if(!target){
@@ -304,18 +290,34 @@ function openReport(id){
       r: id,
       name: REPORTS[id]?.name || "",
       ts: Date.now(),
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
+      source: "github_index"
     })], { type: "application/json" });
-    navigator.sendBeacon?.(TRACK_URL, payload);
+    if (navigator.sendBeacon) navigator.sendBeacon(TRACK_URL, payload);
+    else throw 0;
   } catch(e) {
-    // fallback muy ligero
-    fetch(TRACK_URL, { method:"POST", mode:"no-cors", body: JSON.stringify({ r:id, name: REPORTS[id]?.name||"", ts: Date.now() }) });
+    fetch(TRACK_URL, { method:"POST", mode:"no-cors", body: JSON.stringify({
+      r:id, name: REPORTS[id]?.name||"", ts: Date.now(), source:"github_index"
+    }) });
   }
-  // Navegar inmediato
-  window.location.href = target;
+  window.location.href = target; // navegar inmediato
+  return false;
+}
+
+function copyLink(id){
+  const link = TARGETS[id];
+  if(!link){ showToast("Sin URL"); return false; }
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(link).then(()=>showToast("Copiado"),()=>showToast("No se pudo copiar"));
+  } else {
+    // Fallback
+    const ta=document.createElement('textarea');
+    ta.value=link; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); showToast("Copiado"); }catch{ showToast("No se pudo copiar"); }
+    document.body.removeChild(ta);
+  }
   return false;
 }
 </script>
 </body>
 </html>
-
