@@ -1,122 +1,108 @@
 <!doctype html>
 <html lang="es">
-<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>INDETEC · Apertura de reporte</title>
 <meta name="color-scheme" content="light dark">
-
-<link rel="dns-prefetch" href="https://script.google.com">
-<link rel="preconnect" href="https://script.google.com" crossorigin>
-
 <style>
   :root{--bg:#0b0d12;--fg:#eaeef8;--muted:#9aa3b5;--accent:#2f6fed;--ok:#5bd19a}
-  @media (prefers-color-scheme:light){
-    :root{--bg:#f7f9fc;--fg:#0b0d12;--muted:#5b6476;--accent:#2f6fed;--ok:#10b981}
-  }
+  @media (prefers-color-scheme:light){:root{--bg:#f7f9fc;--fg:#0b0d12;--muted:#5b6476;--accent:#2f6fed;--ok:#10b981}}
   body{margin:0;padding:40px;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center}
-  h1{font-size:1.4rem;margin-bottom:10px}
+  h1{font-size:1.3rem;margin:0 0 8px}
+  .meta{color:var(--muted)}
   .loader{border:4px solid rgba(0,0,0,.15);border-top:4px solid var(--accent);border-radius:50%;width:40px;height:40px;margin:18px auto;animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .ok{color:var(--ok);font-weight:600;margin-top:10px}
-  .meta{color:var(--muted);font-size:.9rem}
-  .foot{color:var(--muted);font-size:.85rem;margin-top:22px;line-height:1.4}
-  a.btn{display:inline-block;margin-top:20px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:12px;text-decoration:none;font-weight:600}
 </style>
-</head>
+
 <body>
-  <h1 id="titulo">Conectando con el servidor…</h1>
-  <p id="msg" class="meta">Verificando enlace seguro de Datos Hacendarios.</p>
+  <h1 id="titulo">Abriendo reporte…</h1>
+  <p id="msg" class="meta">Preparando redirección segura.</p>
   <div class="loader" role="progressbar" aria-label="Cargando"></div>
-  <p class="ok" id="ok"></p>
-  <a id="btnAbrir" class="btn" style="display:none" rel="noopener">Abrir ahora</a>
-  <p class="foot">Bienvenido a Datos Hacendarios. INDETEC.</p>
 
 <script>
 (function(){
-  // deployment index.html (unifica IDs)
-  const DEPLOY_ID = "AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg"; // <— unifica aquí
-  const BASE = `https://script.google.com/macros/s/${DEPLOY_ID}/exec`;
+  // 1) Tu Apps Script (solo para registrar via POST; NO navegamos a él)
+  const TRACK_URL = "https://script.google.com/macros/s/AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg/exec";
 
+  // 2) Catálogo visible (id -> nombre) solo para mensajes bonitos
   const REPORTS = {
-    pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo (2015–2024)'},
-    pe_2000_2023:{name:'Presupuesto de egresos 2000–2023'},
-    pe_entidades:{name:'Presupuesto de egresos por entidad federativa'},
-    efipem_1989_2024:{name:'Estadísticas EFIPEM 1989–2024'},
-    cuentas_capitales:{name:'Cuentas públicas de municipios capitales'},
-    leyes_2019_2025:{name:'Estadísticas de Leyes de Ingresos 2019–2025'},
-    leyes_imp_2019_2025:{name:'Leyes de Ingresos – Impuestos 2019–2025'},
-    efipem_2023:{name:'EFIPEM 2023'},
-    efipem_1989_2023:{name:'EFIPEM 1989–2023'},
-    deuda_municipal:{name:'Deuda pública municipal'},
-    balance_cp_2014_2024:{name:'Balance de Cuentas Públicas 2014–2024'},
-    balance_proj_2025_2030:{name:'Proyecciones 2025–2030'},
-    balance_ldf_2017_2024:{name:'Balance LDF 2017–2024'},
-    eai_ldf:{name:'Estado Analítico de los Ingresos LDF'},
-    mapas_personal:{name:'Mapas de personal ocupado por actividad económica'},
-    predial_potencial:{name:'Impuesto Predial Potencial'},
-    impuestos_potenciales:{name:'Impuestos Potenciales'},
-    pronosticos:{name:'Pronósticos fiscales'},
-    mapas:{name:'Mapas'},
-    indicadores:{name:'Indicadores'},
-    panorama_hacienda:{name:'Panorama de la Hacienda Pública'},
-    ambientales:{name:'Ambientales'},
-    deuda:{name:'Deuda'},
-    municipal:{name:'Municipal'},
-    derechos_agua:{name:'Derechos de Agua Potable'},
-    censos_eco24:{name:'Censos Económicos 2024'},
-    mapas_AGS:{name:'Mapas · Aguascalientes'}, mapas_BC:{name:'Mapas · Baja California'},
-    mapas_BCS:{name:'Mapas · Baja California Sur'}, mapas_CAMP:{name:'Mapas · Campeche'},
-    mapas_CHIS:{name:'Mapas · Chiapas'}, mapas_CHIH:{name:'Mapas · Chihuahua'},
-    mapas_COAH:{name:'Mapas · Coahuila'}, mapas_COL:{name:'Mapas · Colima'},
-    mapas_CDMX:{name:'Mapas · Ciudad de México'}, mapas_DGO:{name:'Mapas · Durango'},
-    mapas_GTO:{name:'Mapas · Guanajuato'}, mapas_GRO:{name:'Mapas · Guerrero'},
-    mapas_HGO:{name:'Mapas · Hidalgo'}, mapas_JAL:{name:'Mapas · Jalisco'},
-    mapas_EDOMEX:{name:'Mapas · Estado de México'}, mapas_MICH:{name:'Mapas · Michoacán'},
-    mapas_MOR:{name:'Mapas · Morelos'}, mapas_NAY:{name:'Mapas · Nayarit'},
-    mapas_NL:{name:'Mapas · Nuevo León'}, mapas_OAX:{name:'Mapas · Oaxaca'},
-    mapas_SLP:{name:'Mapas · San Luis Potosí'}, mapas_PUE:{name:'Mapas · Puebla'},
-    mapas_QRO:{name:'Mapas · Querétaro'}, mapas_QROO:{name:'Mapas · Quintana Roo'},
-    mapas_SIN:{name:'Mapas · Sinaloa'}, mapas_SON:{name:'Mapas · Sonora'},
-    mapas_TAB:{name:'Mapas · Tabasco'}, mapas_TAMPS:{name:'Mapas · Tamaulipas'},
-    mapas_TLAX:{name:'Mapas · Tlaxcala'}, mapas_VER:{name:'Mapas · Veracruz'},
-    mapas_YC:{name:'Mapas · Yucatán'}, mapas_ZAC:{name:'Mapas · Zacatecas'}
+    mapas_AGS:{name:'Mapas · AGS'}, mapas_BC:{name:'Mapas · BC'}, mapas_BCS:{name:'Mapas · BCS'},
+    mapas_CAMP:{name:'Mapas · CAMP'}, mapas_CHIS:{name:'Mapas · CHIS'}, mapas_CHIH:{name:'Mapas · CHIH'},
+    mapas_COAH:{name:'Mapas · COAH'}, mapas_COL:{name:'Mapas · COL'}, mapas_CDMX:{name:'Mapas · CDMX'},
+    mapas_DGO:{name:'Mapas · DGO'}, mapas_GTO:{name:'Mapas · GTO'}, mapas_GRO:{name:'Mapas · GRO'},
+    mapas_HGO:{name:'Mapas · HGO'}, mapas_JAL:{name:'Mapas · JAL'}, mapas_EDOMEX:{name:'Mapas · EDOMEX'},
+    mapas_MICH:{name:'Mapas · MICH'}, mapas_MOR:{name:'Mapas · MOR'}, mapas_NAY:{name:'Mapas · NAY'},
+    mapas_NL:{name:'Mapas · NL'}, mapas_OAX:{name:'Mapas · OAX'}, mapas_SLP:{name:'Mapas · SLP'},
+    mapas_PUE:{name:'Mapas · PUE'}, mapas_QRO:{name:'Mapas · QRO'}, mapas_QROO:{name:'Mapas · QROO'},
+    mapas_SIN:{name:'Mapas · SIN'}, mapas_SON:{name:'Mapas · SON'}, mapas_TAB:{name:'Mapas · TAB'},
+    mapas_TAMPS:{name:'Mapas · TAMPS'}, mapas_TLAX:{name:'Mapas · TLAX'}, mapas_VER:{name:'Mapas · VER'},
+    mapas_YUC:{name:'Mapas · YUC'}, mapas_ZAC:{name:'Mapas · ZAC'}
   };
 
-  // LEE ?id= O ?r= (aceptamos ambos por compatibilidad)
+  // 3) Destinos finales (id -> URL PBI). ¡Aquí está la magia!
+  const TARGETS = {
+    mapas_AGS:'https://app.powerbi.com/view?r=eyJrIjoiNGYyN2ZmZGUtZmFlYS00NTBkLWIxZjEtZDg3ZTE1ZTA0YmM3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_BC:'https://app.powerbi.com/view?r=eyJrIjoiODI0MTNlNmItY2QzZS00MTVlLWFjMjEtMzIzYmU5M2NiYTVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_BCS:'https://app.powerbi.com/view?r=eyJrIjoiZDUwMmExMDctOWQ0OC00ZWI4LWE1YmYtZGNmYWUxNjE4NWFkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_CAMP:'https://app.powerbi.com/view?r=eyJrIjoiZTYxZmFiODYtNTU5OC00YWZjLWEyYmItNTMxYWVlNDFlYzFlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_CHIS:'https://app.powerbi.com/view?r=eyJrIjoiMjRhNGE2ODItZDE1NC00YTllLWJiMmYtODI0OTU5NWQ1ZDA1IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_CHIH:'https://app.powerbi.com/view?r=eyJrIjoiNDM1MTg4ZmYtYWFjMC00MWM5LTk2NTAtYjgwN2Y3ZmJlNTI4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_COAH:'https://app.powerbi.com/view?r=eyJrIjoiZjZhOWQzODAtMmYwMi00MmViLWEwNjItNzI5YTBjMjI1YzdlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_COL:'https://app.powerbi.com/view?r=eyJrIjoiZGM3MWIyNDEtNzI4OC00YmQ4LWE3MWYtMmQ0ZTllNTg1NTMxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_CDMX:'https://app.powerbi.com/view?r=eyJrIjoiYWRiMjhmNmQtMTBjNy00MmY5LWE2MDYtMjVmNjQ0N2JjODJhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_DGO:'https://app.powerbi.com/view?r=eyJrIjoiNWYzNGNmOTktNDI4Ny00YTYyLThkYjktZjUxYjkxNjQ4NjAwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_GTO:'https://app.powerbi.com/view?r=eyJrIjoiZTkzYWE5ZmQtN2ViNC00YjgzLThkNTYtMDdmNjhiMmNjYTExIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_GRO:'https://app.powerbi.com/view?r=eyJrIjoiYTM2ZjNjNzUtZmM1MS00Y2U2LWExZDktOTFiN2I1ZDg3MmZiIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_HGO:'https://app.powerbi.com/view?r=eyJrIjoiODY2NWIwZDItNzdhMC00MDAzLWE4ZWMtMDk4ZWMzODMwOWZhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_JAL:'https://app.powerbi.com/view?r=eyJrIjoiOGQ0MzE4NzYtM2IyOS00ZTFiLWI5ZTctZjdjMjBiMjI2NDhmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_EDOMEX:'https://app.powerbi.com/view?r=eyJrIjoiODY1MzkzZTUtMDQ5Zi00NWJlLWIyZWQtNzkxYjRiYjU3Njk1IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_MICH:'https://app.powerbi.com/view?r=eyJrIjoiMjRlN2U1YmQtMGZkYy00NWJiLTg2ZmUtYmU3YmVjNzY3ZWQxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_MOR:'https://app.powerbi.com/view?r=eyJrIjoiYWNlYThiNWUtOTRmMC00YTk0LWI3YzktMmZlYmMwZWIwNzJlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_NAY:'https://app.powerbi.com/view?r=eyJrIjoiZjY5MjM1ODUtNGY0ZC00Mzk2LWI5NGYtMjA4ODkxMWU1Yzc2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_NL:'https://app.powerbi.com/view?r=eyJrIjoiZjRlMDMyMjItMWM1NC00YjEyLTk4NTEtZDg1ZjRiNTZkOTVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_OAX:'https://app.powerbi.com/view?r=eyJrIjoiZGEzYjA3ODMtOTcxZi00ZTFmLTk0M2ItYWQyMmU0OTlmZTRlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_SLP:'https://app.powerbi.com/view?r=eyJrIjoiZjQzMTQxMDItZGNhZC00ZmRiLTk0MGQtOGZmNWFjM2ViODVhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_PUE:'https://app.powerbi.com/view?r=eyJrIjoiMWYwNDY1NjgtZTNiOS00ZTRlLWJhODUtZDE2MGVkNjdhNjc2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_QRO:'https://app.powerbi.com/view?r=eyJrIjoiNDFjYWI4NzgtMzJkMi00MWQ3LTgzYzMtMzc2ODVmNzg5MjdjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_QROO:'https://app.powerbi.com/view?r=eyJrIjoiM2YzODNkNDEtMmUyYy00MDQ5LWJmZmEtZWIzMTBkNTRmOTA4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_SIN:'https://app.powerbi.com/view?r=eyJrIjoiZWJmNzMyNTctMWJiYy00ZWYyLTg1YTItZjkzZTliY2JmNGFmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_SON:'https://app.powerbi.com/view?r=eyJrIjoiNjJiYzYzZjEtNTkwNy00NjVhLTg2MWUtYTJjMmVjODgwODY4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_TAB:'https://app.powerbi.com/view?r=eyJrIjoiZjhmZGVhZDUtM2NkYS00NDIxLWI5ZTYtOWU0ZmY4MWE4ZTJkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_TAMPS:'https://app.powerbi.com/view?r=eyJrIjoiMTdmODFmZDctMGY5ZS00N2U4LWE1YWMtYTBlYTI3MGY4MDc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_TLAX:'https://app.powerbi.com/view?r=eyJrIjoiMDQzNjk1YzktZGZhZC00ZTg5LWI4ZGMtMzEzZTk4MTJmOTBjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_VER:'https://app.powerbi.com/view?r=eyJrIjoiMjRlMDczYWEtMWZkNC00ZTI2LWJkM2EtZWZmNTA2Zjg1NTZjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_YUC:'https://app.powerbi.com/view?r=eyJrIjoiNzNkMmUzYjctZWZhZC00NjQ5LWE3MTYtZWY3NWE0NmRmZTUzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9',
+    mapas_ZAC:'https://app.powerbi.com/view?r=eyJrIjoiMWQ5YTI0NGYtNzg1ZS00NGVmLWIzNzMtZTU0YTg5YzI4ZWVjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9'
+  };
+
+  // Leer ?id= o ?r=
   const qs = new URLSearchParams(location.search);
   const id = qs.get("id") || qs.get("r");
-  if(!id){
-    document.getElementById("titulo").textContent = "Falta el parámetro ?id= (o ?r=)";
-    document.getElementById("msg").textContent = "No se puede identificar el reporte.";
+  if(!id || !TARGETS[id]){
+    document.getElementById("titulo").textContent = "Falta o es inválido el id del reporte.";
+    document.getElementById("msg").textContent = "Ejemplo: ?id=mapas_QRO";
     return;
   }
 
-  const name = REPORTS[id]?.name || id;
-  document.getElementById("titulo").textContent = "Abriendo reporte";
-  document.getElementById("msg").textContent = name;
-  document.getElementById("ok").textContent = "Enlace verificado correctamente.";
+  // Mensajes
+  const name = (REPORTS[id] && REPORTS[id].name) || id;
+  document.getElementById("titulo").textContent = "Abriendo: " + name;
+  document.getElementById("msg").textContent = "Registrando clic y redirigiendo…";
 
-  // Redirección — tu Apps Script doGet espera **id**, no r
-  const src = location.origin + location.pathname + "?id=" + encodeURIComponent(id);
-  const dest = BASE + "?id=" + encodeURIComponent(id) + "&src=" + encodeURIComponent(src);
-
-  // Registro no bloqueante (doPost) — usa 'userAgent' para cuadrar con tu hoja
+  // 4) Registrar SIN BLOQUEO y saltar al PBI
   try{
     const payload = new Blob([JSON.stringify({
-      r:id, name, src, ts:Date.now(), userAgent:navigator.userAgent, source:"go_html"
-    })],{type:"application/json"});
-    navigator.sendBeacon(BASE, payload);
-  }catch{}
-
-  // Botón de respaldo visible y salto inmediato
-  const a = document.getElementById("btnAbrir");
-  a.style.display = "inline-block";
-  a.href = dest;
-
-  // Redirección inmediata con fallback
-  try{ location.replace(dest); } catch{ location.href = dest; }
+      r:id, name, ts:Date.now(), userAgent:navigator.userAgent, source:'go.html'
+    })], {type:"application/json"});
+    navigator.sendBeacon(TRACK_URL, payload);
+  }catch(e){
+    // fallback muy ligero
+    fetch(TRACK_URL, {method:"POST", mode:"no-cors", body: JSON.stringify({r:id, name, ts:Date.now(), source:'go.html'})});
+  }
+  // Navegar directo al PBI (sin pasar por Apps Script)
+  location.replace(TARGETS[id]);
 })();
 </script>
 </body>
 </html>
+
