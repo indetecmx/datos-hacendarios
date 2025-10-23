@@ -5,27 +5,40 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>INDETEC · Apertura de reporte</title>
 <meta name="color-scheme" content="light dark">
+
+<!-- Preconexiones -->
 <link rel="dns-prefetch" href="https://script.google.com">
 <link rel="preconnect" href="https://script.google.com" crossorigin>
 <link rel="dns-prefetch" href="https://app.powerbi.com">
 <link rel="preconnect" href="https://app.powerbi.com" crossorigin>
+
 <style>
-  :root{--bg:#0b0d12;--fg:#eaeef8;--muted:#9aa3b5;--accent:#2f6fed}
+  :root {
+    --bg:#0b0d12; --fg:#eaeef8; --muted:#9aa3b5; --accent:#2f6fed;
+  }
   @media (prefers-color-scheme:light){
-    :root{--bg:#f7f9fc;--fg:#0b0d12;--muted:#5b6476;--accent:#2f6fed}
+    :root { --bg:#f7f9fc; --fg:#0b0d12; --muted:#5b6476; --accent:#2f6fed; }
   }
   *{box-sizing:border-box}
-  body{margin:0;padding:40px;background:var(--bg);color:var(--fg);
-       font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;text-align:center}
+  body{
+    margin:0; padding:40px; background:var(--bg); color:var(--fg);
+    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    text-align:center;
+  }
   h1{font-size:1.25rem;margin:0 0 6px}
   .meta{color:var(--muted);font-size:.95rem}
-  .loader{border:4px solid rgba(0,0,0,.15);border-top:4px solid var(--accent);
-          border-radius:50%;width:40px;height:40px;margin:18px auto;animation:spin 1s linear infinite}
+  .loader{
+    border:4px solid rgba(0,0,0,.15);
+    border-top:4px solid var(--accent);
+    border-radius:50%;
+    width:40px;height:40px;
+    margin:18px auto;
+    animation:spin 1s linear infinite;
+  }
   @keyframes spin{to{transform:rotate(360deg)}}
-  a.btn{display:inline-block;margin-top:16px;padding:10px 16px;border-radius:10px;
-        text-decoration:none;background:var(--accent);color:#fff}
 </style>
 </head>
+
 <body>
   <h1 id="t">Abriendo reporte…</h1>
   <p id="m" class="meta">Preparando redirección segura</p>
@@ -33,9 +46,10 @@
 
 <script>
 /* ========= 1) TU Apps Script ========= */
-const TRACK_URL = "https://script.google.com/macros/s/AKfycbwGhPQp8Oqph_ncKaUuHmOXzusartA4XhCSLDKUkGeI3LBCh8Z2EZtWRITrqAhY-ZFx/exec";
+// ⚠️ Reemplaza este ID por el de tu último despliegue (Deploy → New deployment → Web app)
+const TRACK_URL = "https://script.google.com/macros/s/AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg/exec";
 
-/* ========= 2) Nombres (solo UI) ========= */
+/* ========= 2) Catálogo de nombres ========= */
 const NAMES = {
   pe_cap_2015_2024:'Presupuestos de egresos estatales a nivel capítulo para el periodo 2015 a 2024',
   pe_2000_2023:'Presupuesto de egresos 2000 a 2023',
@@ -63,7 +77,7 @@ const NAMES = {
   municipal:'Municipal',
   derechos_agua:'Derechos de agua potable',
   censos_eco24:'Censos Económicos 2024',
-  // Mapas por estado (YC y YUC compatibles)
+  // Mapas por estado
   mapas_AGS:'Mapas · AGS', mapas_BC:'Mapas · BC', mapas_BCS:'Mapas · BCS', mapas_CAMP:'Mapas · CAMP',
   mapas_CHIS:'Mapas · CHIS', mapas_CHIH:'Mapas · CHIH', mapas_COAH:'Mapas · COAH', mapas_COL:'Mapas · COL',
   mapas_CDMX:'Mapas · CDMX', mapas_DGO:'Mapas · DGO', mapas_GTO:'Mapas · GTO', mapas_GRO:'Mapas · GRO',
@@ -71,126 +85,73 @@ const NAMES = {
   mapas_MOR:'Mapas · MOR', mapas_NAY:'Mapas · NAY', mapas_NL:'Mapas · NL', mapas_OAX:'Mapas · OAX',
   mapas_SLP:'Mapas · SLP', mapas_PUE:'Mapas · PUE', mapas_QRO:'Mapas · QRO', mapas_QROO:'Mapas · QROO',
   mapas_SIN:'Mapas · SIN', mapas_SON:'Mapas · SON', mapas_TAB:'Mapas · TAB', mapas_TAMPS:'Mapas · TAMPS',
-  mapas_TLAX:'Mapas · TLAX', mapas_VER:'Mapas · VER', mapas_YC:'Mapas · YC', mapas_YUC:'Mapas · YUC',
-  mapas_ZAC:'Mapas · ZAC'
+  mapas_TLAX:'Mapas · TLAX', mapas_VER:'Mapas · VER', mapas_YUC:'Mapas · YUC', mapas_ZAC:'Mapas · ZAC'
 };
 
-/* ========= 3) Destinos (completo) ========= */
-const TARGETS = {
-  pe_cap_2015_2024:"https://app.powerbi.com/view?r=eyJrIjoiNGJkYjJjNDItNjdjYS00YTg3LWE3YjUtZDMzYjUwZTMxNzlmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  pe_2000_2023:"https://app.powerbi.com/view?r=eyJrIjoiMzgxODE4ZDEtYTRjNi00MDZiLTg1ZWMtMTkyNDMzMTlmNjc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  pe_entidades:"https://app.powerbi.com/view?r=eyJrIjoiMTk3YzZmMmQtZDA2OC00YTBlLWIwNWEtOWMwMWM2NTNjZWJhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  efipem_1989_2024:"https://app.powerbi.com/view?r=eyJrIjoiNzg1MWNhM2UtNDFhNy00YzUyLWExZDEtMjkxMWRiNDE5MTEwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  cuentas_capitales:"https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  leyes_2019_2025:"https://app.powerbi.com/view?r=eyJrIjoiNTlmZGZiYmQtMzYzNC00MzI0LTgzNTItZmU5NmFjMjU4MjAxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
-  leyes_imp_2019_2025:"https://app.powerbi.com/view?r=eyJrIjoiNDdlZGRlNDAtZGNlNC00NDBiLTk0YmQtYTBhMjUwM2NkOWMwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
-  efipem_2023:"https://app.powerbi.com/view?r=eyJrIjoiODkzNTY5M2QtNjkxYy00MTNiLWJmNmYtNzM4ZTQ2ZGZhYzI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  efipem_1989_2023:"https://app.powerbi.com/view?r=eyJrIjoiNmE2NTUwYmEtNzQwNC00OTU4LTk5NmMtYWFlZjVhMmY3MDUxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  deuda_municipal:"https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  balance_cp_2014_2024:"https://app.powerbi.com/view?r=eyJrIjoiZjkzYmJkZWYtNTZkZi00NzMxLTkyMjItMjc2ZGRjMTVjMGQxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection",
-  balance_proj_2025_2030:"https://app.powerbi.com/view?r=eyJrIjoiNGZkZmM5OGItNDljYi00MDExLWFlZTctNTMxZjRiZjEwMTVkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  balance_ldf_2017_2024:"https://app.powerbi.com/view?r=eyJrIjoiZWMzNjhlNzItZjFiZi00MGMwLWJmNzQtMjE1MDE1NWYwMDJiIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  eai_ldf:"https://app.powerbi.com/view?r=eyJrIjoiNWNjNmQ4YWMtNjNhMi00OTg1LWE4MDUtM2QwNThjZGU5MDI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_personal:"https://app.powerbi.com/view?r=eyJrIjoiMzY4NmVlNGEtN2M5Zi00OTM3LTkwMDMtYThmMWQ5NjU0ZTg0IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  predial_potencial:"https://app.powerbi.com/view?r=eyJrIjoiODkyYTUyMzMtNGQ2Yy00ZTBkLTlkNGYtYjM1MDA0MmEyNjI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  impuestos_potenciales:"https://app.powerbi.com/view?r=eyJrIjoiNjQwZWFmYmQtZGViNS00ZWNhLWJmZTYtYWVhZGY4NGQ0NTE5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSectionbc92482a221c92453c0d",
-  pronosticos:"https://app.powerbi.com/view?r=eyJrIjoiZTI0NzE1ODMtNzQ1Ni00MjA1LWFiMDEtMTRlYmY5MzU1ODAzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas:"https://app.powerbi.com/view?r=eyJrIjoiNjY3YTY4ZjItZjY0Mi00OWFiLWJlZmMtNmI0M2E4YjE4MGI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  indicadores:"https://app.powerbi.com/view?r=eyJrIjoiNzEzMGFlNzYtZDhkMS00ODhkLWJiMTEtMGU5YmFhYmUwNDA2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  panorama_hacienda:"https://app.powerbi.com/view?r=eyJrIjoiYzczZWEwNWItNWNjNC00M2UyLTkyN2YtYTVkODE4NDczNjczIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  ambientales:"https://app.powerbi.com/view?r=eyJrIjoiODFkYjFkNWItMzg5Zi00YjA3LTlkMTUtMGE5NTI5MzUxNmE3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  deuda:"https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  municipal:"https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  derechos_agua:"https://app.powerbi.com/view?r=eyJrIjoiYzUyMjU1YjUtZDdjNy00MTQxLWE2NzgtN2MxNWJkZGRhZGMyIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  censos_eco24:"https://app.powerbi.com/view?r=eyJrIjoiZDJkODBkZWUtNmE3MC00NDdjLWFkOTUtZGY2MDZlNGI0NTdjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  /* Mapas por estado */
-  mapas_AGS:"https://app.powerbi.com/view?r=eyJrIjoiNGYyN2ZmZGUtZmFlYS00NTBkLWIxZjEtZDg3ZTE1ZTA0YmM3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_BC:"https://app.powerbi.com/view?r=eyJrIjoiODI0MTNlNmItY2QzZS00MTVlLWFjMjEtMzIzYmU5M2NiYTVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_BCS:"https://app.powerbi.com/view?r=eyJrIjoiZDUwMmExMDctOWQ0OC00ZWI4LWE1YmYtZGNmYWUxNjE4NWFkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_CAMP:"https://app.powerbi.com/view?r=eyJrIjoiZTYxZmFiODYtNTU5OC00YWZjLWEyYmItNTMxYWVlNDFlYzFlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_CHIS:"https://app.powerbi.com/view?r=eyJrIjoiMjRhNGE2ODItZDE1NC00YTllLWJiMmYtODI0OTU5NWQ1ZDA1IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_CHIH:"https://app.powerbi.com/view?r=eyJrIjoiNDM1MTg4ZmYtYWFjMC00MWM5LTk2NTAtYjgwN2Y3ZmJlNTI4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_COAH:"https://app.powerbi.com/view?r=eyJrIjoiZjZhOWQzODAtMmYwMi00MmViLWEwNjItNzI5YTBjMjI1YzdlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_COL:"https://app.powerbi.com/view?r=eyJrIjoiZGM3MWIyNDEtNzI4OC00YmQ4LWE3MWYtMmQ0ZTllNTg1NTMxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_CDMX:"https://app.powerbi.com/view?r=eyJrIjoiYWRiMjhmNmQtMTBjNy00MmY5LWE2MDYtMjVmNjQ0N2JjODJhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_DGO:"https://app.powerbi.com/view?r=eyJrIjoiNWYzNGNmOTktNDI4Ny00YTYyLThkYjktZjUxYjkxNjQ4NjAwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_GTO:"https://app.powerbi.com/view?r=eyJrIjoiZTkzYWE5ZmQtN2ViNC00YjgzLThkNTYtMDdmNjhiMmNjYTExIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_GRO:"https://app.powerbi.com/view?r=eyJrIjoiYTM2ZjNjNzUtZmM1MS00Y2U2LWExZDktOTFiN2I1ZDg3MmZiIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_HGO:"https://app.powerbi.com/view?r=eyJrIjoiODY2NWIwZDItNzdhMC00MDAzLWE4ZWMtMDk4ZWMzODMwOWZhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_JAL:"https://app.powerbi.com/view?r=eyJrIjoiOGQ0MzE4NzYtM2IyOS00ZTFiLWI5ZTctZjdjMjBiMjI2NDhmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_EDOMEX:"https://app.powerbi.com/view?r=eyJrIjoiODY1MzkzZTUtMDQ5Zi00NWJlLWIyZWQtNzkxYjRiYjU3Njk1IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_MICH:"https://app.powerbi.com/view?r=eyJrIjoiMjRlN2U1YmQtMGZkYy00NWJiLTg2ZmUtYmU3YmVjNzY3ZWQxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_MOR:"https://app.powerbi.com/view?r=eyJrIjoiYWNlYThiNWUtOTRmMC00YTk0LWI3YzktMmZlYmMwZWIwNzJlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_NAY:"https://app.powerbi.com/view?r=eyJrIjoiZjY5MjM1ODUtNGY0ZC00Mzk2LWI5NGYtMjA4ODkxMWU1Yzc2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_NL:"https://app.powerbi.com/view?r=eyJrIjoiZjRlMDMyMjItMWM1NC00YjEyLTk4NTEtZDg1ZjRiNTZkOTVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_OAX:"https://app.powerbi.com/view?r=eyJrIjoiZGEzYjA3ODMtOTcxZi00ZTFmLTk0M2ItYWQyMmU0OTlmZTRlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_SLP:"https://app.powerbi.com/view?r=eyJrIjoiZjQzMTQxMDItZGNhZC00ZmRiLTk0MGQtOGZmNWFjM2ViODVhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_PUE:"https://app.powerbi.com/view?r=eyJrIjoiMWYwNDY1NjgtZTNiOS00ZTRlLWJhODUtZDE2MGVkNjdhNjc2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_QRO:"https://app.powerbi.com/view?r=eyJrIjoiNDFjYWI4NzgtMzJkMi00MWQ3LTgzYzMtMzc2ODVmNzg5MjdjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_QROO:"https://app.powerbi.com/view?r=eyJrIjoiM2YzODNkNDEtMmUyYy00MDQ5LWJmZmEtZWIzMTBkNTRmOTA4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_SIN:"https://app.powerbi.com/view?r=eyJrIjoiZWJmNzMyNTctMWJiYy00ZWYyLTg1YTItZjkzZTliY2JmNGFmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_SON:"https://app.powerbi.com/view?r=eyJrIjoiNjJiYzYzZjEtNTkwNy00NjVhLTg2MWUtYTJjMmVjODgwODY4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_TAB:"https://app.powerbi.com/view?r=eyJrIjoiZjhmZGVhZDUtM2NkYS00NDIxLWI5ZTYtOWU0ZmY4MWE4ZTJkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_TAMPS:"https://app.powerbi.com/view?r=eyJrIjoiMTdmODFmZDctMGY5ZS00N2U4LWE1YWMtYTBlYTI3MGY4MDc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_TLAX:"https://app.powerbi.com/view?r=eyJrIjoiMDQzNjk1YzktZGZhZC00ZTg5LWI4ZGMtMzEzZTk4MTJmOTBjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_VER:"https://app.powerbi.com/view?r=eyJrIjoiMjRlMDczYWEtMWZkNC00ZTI2LWJkM2EtZWZmNTA2Zjg1NTZjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_YC:"https://app.powerbi.com/view?r=eyJrIjoiNzNkMmUzYjctZWZhZC00NjQ5LWE3MTYtZWY3NWE0NmRmZTUzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-  mapas_ZAC:"https://app.powerbi.com/view?r=eyJrIjoiMWQ5YTI0NGYtNzg1ZS00NGVmLWIzNzMtZTU0YTg5YzI4ZWVjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9"
-};
-
-/* ========= 4) Lógica ========= */
+/* ========= 3) Lógica ========= */
 (async function(){
   const qs = new URLSearchParams(location.search);
   const id = (qs.get("id") || qs.get("r") || "").trim();
   const src = (qs.get("src") || "go.html").trim();
+
   const t = document.getElementById("t");
   const m = document.getElementById("m");
 
-  if(!id || !(id in TARGETS) ){
-    t.textContent = "Falta o es inválido el id del reporte.";
-    m.textContent = "Ejemplo: ?id=mapas_QRO";
+  if(!id){
+    t.textContent = "ID faltante o inválido";
+    m.textContent = "Ejemplo: ?id=mapas_JAL";
     return;
   }
 
-  const dest = TARGETS[id] || "";
   const name = NAMES[id] || id;
   t.textContent = "Abriendo reporte";
   m.textContent = name;
 
-  // --- tracking robusto: 1) sendBeacon  2) fetch no-cors keepalive  3) GET al doGet (registro puro)
-  const payload = { r:id, name, ts: Date.now(), userAgent: navigator.userAgent, source: src };
+  // payload con metadatos del cliente
+  const payload = {
+    r: id,
+    name,
+    ts: Date.now(),
+    userAgent: navigator.userAgent,
+    source: src
+  };
 
   let ok = false;
+
+  // 1) Intentar sendBeacon
   try{
     if(navigator.sendBeacon){
-      const blob = new Blob([JSON.stringify(payload)], {type:"application/json"});
+      const blob = new Blob([JSON.stringify(payload)], { type:"application/json" });
       ok = navigator.sendBeacon(TRACK_URL, blob);
     }
   }catch{}
 
+  // 2) Fallback fetch POST
   if(!ok){
     try{
       await fetch(TRACK_URL, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
+        method: "POST",
         body: JSON.stringify(payload),
-        keepalive:true,
-        mode:"no-cors"
+        keepalive: true,
+        mode: "no-cors"
       });
       ok = true;
     }catch{}
   }
 
+  // 3) Último recurso: GET “silencioso” (nunca abre Apps Script)
   if(!ok){
-    // 3) último recurso: GET a doGet para que al menos cuente
     try{
       const u = `${TRACK_URL}?id=${encodeURIComponent(id)}&src=${encodeURIComponent("go_fallback")}`;
-      fetch(u, { method:"GET", mode:"no-cors", keepalive:true });
+      fetch(u, { method: "GET", mode: "no-cors", keepalive: true });
     }catch{}
   }
 
-  // Salto al PBI (pequeño delay para dar aire al beacon)
-  setTimeout(()=>location.replace(dest), 120);
+  // Redirección al PBI después de registrar
+  const base = "https://app.powerbi.com/view?r=";
+  const entry = Object.entries(NAMES).find(([key]) => key === id);
+  const dest = TARGETS?.[id] || ""; // si defines TARGETS, úsalo, o concatenar manualmente
+  setTimeout(() => location.replace(dest), 120);
 })();
 </script>
 </body>
