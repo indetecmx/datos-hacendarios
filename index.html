@@ -6,8 +6,7 @@
 <title>INDETEC · Datos Hacendarios · Reportes PBI</title>
 <meta name="color-scheme" content="light dark">
 
-<link rel="dns-prefetch" href="https://script.google.com">
-<link rel="preconnect" href="https://script.google.com" crossorigin>
+<!-- (opcional) preconnect a app.powerbi; ya no a Apps Script -->
 <link rel="dns-prefetch" href="https://app.powerbi.com">
 <link rel="preconnect" href="https://app.powerbi.com" crossorigin>
 
@@ -67,7 +66,7 @@
     </div>
 
     <div id="app" hidden></div>
-    <p class="hint" style="margin-top:16px">Tip: los clics se registran con <code>sendBeacon</code> sin frenar la navegación a Power BI.</p>
+    <p class="hint" style="margin-top:16px">Tip: los clics se registran con <code>sendBeacon</code> al Worker sin frenar la navegación.</p>
   </div>
 </main>
 
@@ -76,10 +75,10 @@
 <script defer>
 /* ====== CONFIGURACIÓN ====== */
 
-// URL de tu Apps Script (ejecución pública) para registrar clics
-const TRACK_URL = "https://script.google.com/macros/s/AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg/exec";
+/** URL base de tu Cloudflare Worker (reemplaza) **/
+const WORKER_BASE = "https://TU-WORKER.workers.dev";
 
-// Catálogo (id → nombre) — sin URLs aquí
+/** Catálogo (id → nombre) — sin URLs aquí **/
 const REPORTS = {
   pe_cap_2015_2024:{name:'Presupuestos de egresos estatales a nivel capítulo para el periodo 2015 a 2024'},
   pe_2000_2023:{name:'Presupuesto de egresos 2000 a 2023'},
@@ -139,11 +138,11 @@ const REPORTS = {
   mapas_TAMPS:{name:'Mapas · TAMPS'},
   mapas_TLAX:{name:'Mapas · TLAX'},
   mapas_VER:{ name:'Mapas · VER' },
-  mapas_YUC:{ name:'Mapas · YUC' },  /* <- alineado con tu Apps Script */
+  mapas_YUC:{ name:'Mapas · YUC' },
   mapas_ZAC:{ name:'Mapas · ZAC' }
 };
 
-// Destinos (id → URL final en Power BI)
+/** Destinos (id → URL final en Power BI) **/
 const TARGETS = {
   pe_cap_2015_2024:"https://app.powerbi.com/view?r=eyJrIjoiNGJkYjJjNDItNjdjYS00YTg3LWE3YjUtZDMzYjUwZTMxNzlmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
   pe_2000_2023:"https://app.powerbi.com/view?r=eyJrIjoiMzgxODE4ZDEtYTRjNi00MDZiLTg1ZWMtMTkyNDMzMTlmNjc4IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
@@ -151,7 +150,7 @@ const TARGETS = {
   efipem_1989_2024:"https://app.powerbi.com/view?r=eyJrIjoiNzg1MWNhM2UtNDFhNy00YzUyLWExZDEtMjkxMWRiNDE5MTEwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
   cuentas_capitales:"https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
   leyes_2019_2025:"https://app.powerbi.com/view?r=eyJrIjoiNTlmZGZiYmQtMzYzNC00MzI0LTgzNTItZmU5NmFjMjU4MjAxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
-  leyes_imp_2019_2025:"https://app.powerbi.com/view?r=eyJrIjoiNDdlZGRlNDAtZGNlNC00NDBiLTk0YmQtYTBhMjUwM2NkOWMwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
+  leyes_imp_2019_2025:"https://app.powerbi.com/view?r=eyJrIjoiNDdlZGRlNDAtZGNlNC00NDBiLTk0YmQtYTBhMjUwM2NkOWMwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2Mw-LTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
   efipem_2023:"https://app.powerbi.com/view?r=eyJrIjoiODkzNTY5M2QtNjkxYy00MTNiLWJmNmYtNzM4ZTQ2ZGZhYzI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
   efipem_1989_2023:"https://app.powerbi.com/view?r=eyJrIjoiNmE2NTUwYmEtNzQwNC00OTU4LTk5NmMtYWFlZjVhMmY3MDUxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
   deuda_municipal:"https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
@@ -278,29 +277,41 @@ btnGroup.addEventListener("click",()=>{grouped=!grouped;btnGroup.setAttribute("a
 btnIds.addEventListener("click",()=>{showIds=!showIds;btnIds.setAttribute("aria-pressed",String(showIds));render();});
 window.addEventListener('DOMContentLoaded', render, {once:true});
 
-/* ====== TRACKING SIN BLOQUEO ====== */
+/* ====== TRACKING SIN BLOQUEO (Worker) ====== */
+function logBeaconToWorker(payload) {
+  try {
+    const data = new Blob([JSON.stringify(payload)], { type: "application/json" });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(WORKER_BASE + "/log", data);
+      return;
+    }
+  } catch {}
+  // Fallback (no bloqueante)
+  fetch(WORKER_BASE + "/log", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true,
+    mode: "no-cors"
+  });
+}
+
 function openReport(id){
   const target = TARGETS[id];
   if(!target){
     alert("Falta configurar la URL del reporte: " + id);
     return false;
   }
-  try {
-    const payload = new Blob([JSON.stringify({
-      r: id,
-      name: REPORTS[id]?.name || "",
-      ts: Date.now(),
-      userAgent: navigator.userAgent,
-      source: "github_index"
-    })], { type: "application/json" });
-    if (navigator.sendBeacon) navigator.sendBeacon(TRACK_URL, payload);
-    else throw 0;
-  } catch(e) {
-    fetch(TRACK_URL, { method:"POST", mode:"no-cors", body: JSON.stringify({
-      r:id, name: REPORTS[id]?.name||"", ts: Date.now(), source:"github_index"
-    }) });
-  }
-  window.location.href = target; // navegar inmediato
+  logBeaconToWorker({
+    r: id,
+    id,
+    name: REPORTS[id]?.name || "",
+    ts: Date.now(),
+    userAgent: navigator.userAgent,
+    source: "github_index"
+  });
+  // Redirección única al PBI (sin intermedios)
+  window.location.href = target;
   return false;
 }
 
@@ -310,7 +321,6 @@ function copyLink(id){
   if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(link).then(()=>showToast("Copiado"),()=>showToast("No se pudo copiar"));
   } else {
-    // Fallback
     const ta=document.createElement('textarea');
     ta.value=link; document.body.appendChild(ta); ta.select();
     try{ document.execCommand('copy'); showToast("Copiado"); }catch{ showToast("No se pudo copiar"); }
@@ -321,3 +331,4 @@ function copyLink(id){
 </script>
 </body>
 </html>
+
