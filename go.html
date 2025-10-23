@@ -6,34 +6,25 @@
 <title>INDETEC · Apertura de reporte</title>
 <meta name="color-scheme" content="light dark">
 
-<!-- Preconexiones -->
-<link rel="dns-prefetch" href="https://script.google.com">
-<link rel="preconnect" href="https://script.google.com" crossorigin>
+<!-- Preconexiones (solo a Power BI; quitamos Apps Script) -->
 <link rel="dns-prefetch" href="https://app.powerbi.com">
 <link rel="preconnect" href="https://app.powerbi.com" crossorigin>
 
 <style>
-  :root {
-    --bg:#0b0d12; --fg:#eaeef8; --muted:#9aa3b5; --accent:#2f6fed;
-  }
+  :root { --bg:#0b0d12; --fg:#eaeef8; --muted:#9aa3b5; --accent:#2f6fed; }
   @media (prefers-color-scheme:light){
     :root { --bg:#f7f9fc; --fg:#0b0d12; --muted:#5b6476; --accent:#2f6fed; }
   }
   *{box-sizing:border-box}
   body{
     margin:0; padding:40px; background:var(--bg); color:var(--fg);
-    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    text-align:center;
+    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; text-align:center;
   }
   h1{font-size:1.25rem;margin:0 0 6px}
   .meta{color:var(--muted);font-size:.95rem}
   .loader{
-    border:4px solid rgba(0,0,0,.15);
-    border-top:4px solid var(--accent);
-    border-radius:50%;
-    width:40px;height:40px;
-    margin:18px auto;
-    animation:spin 1s linear infinite;
+    border:4px solid rgba(0,0,0,.15); border-top:4px solid var(--accent);
+    border-radius:50%; width:40px; height:40px; margin:18px auto; animation:spin 1s linear infinite;
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -45,11 +36,15 @@
   <div class="loader" role="progressbar" aria-label="Cargando"></div>
 
 <script>
-/* ========= 1) TU Apps Script ========= */
-// ⚠️ Reemplaza este ID por el de tu último despliegue (Deploy → New deployment → Web app)
-const TRACK_URL = "https://script.google.com/macros/s/AKfycbzHrQSlW2c-hV2myQ3er9WDlMm1DGDJ32YPBQeapF5n4HqS0A5X58jGnXyrttoOv4x8Yg/exec";
+/* ========= 1) Cloudflare Worker =========
+   Reemplaza por tu endpoint: https://TU-WORKER.workers.dev
+   El Worker expone:
+   - GET  /go?id=...    -> registra y hace 302 directo al PBI (único salto)
+   - POST /log          -> (opcional) para beacons si quisieras
+*/
+const WORKER_BASE = "https://TU-WORKER.workers.dev";
 
-/* ========= 2) Catálogo de nombres ========= */
+/* ========= 2) Catálogo de nombres (solo para mostrar) ========= */
 const NAMES = {
   pe_cap_2015_2024:'Presupuestos de egresos estatales a nivel capítulo para el periodo 2015 a 2024',
   pe_2000_2023:'Presupuesto de egresos 2000 a 2023',
@@ -88,11 +83,11 @@ const NAMES = {
   mapas_TLAX:'Mapas · TLAX', mapas_VER:'Mapas · VER', mapas_YUC:'Mapas · YUC', mapas_ZAC:'Mapas · ZAC'
 };
 
-/* ========= 3) Lógica ========= */
-(async function(){
-  const qs = new URLSearchParams(location.search);
-  const id = (qs.get("id") || qs.get("r") || "").trim();
-  const src = (qs.get("src") || "go.html").trim();
+/* ========= 3) Redirección única vía Worker ========= */
+(function(){
+  const qs  = new URLSearchParams(location.search);
+  const id  = (qs.get("id") || qs.get("r") || "").trim();
+  const src = (qs.get("src") || "go_html").trim();
 
   const t = document.getElementById("t");
   const m = document.getElementById("m");
@@ -104,54 +99,13 @@ const NAMES = {
   }
 
   const name = NAMES[id] || id;
-  t.textContent = "Abriendo reporte";
+  t.textContent = "Abriendo reporte…";
   m.textContent = name;
 
-  // payload con metadatos del cliente
-  const payload = {
-    r: id,
-    name,
-    ts: Date.now(),
-    userAgent: navigator.userAgent,
-    source: src
-  };
-
-  let ok = false;
-
-  // 1) Intentar sendBeacon
-  try{
-    if(navigator.sendBeacon){
-      const blob = new Blob([JSON.stringify(payload)], { type:"application/json" });
-      ok = navigator.sendBeacon(TRACK_URL, blob);
-    }
-  }catch{}
-
-  // 2) Fallback fetch POST
-  if(!ok){
-    try{
-      await fetch(TRACK_URL, {
-        method: "POST",
-        body: JSON.stringify(payload),
-        keepalive: true,
-        mode: "no-cors"
-      });
-      ok = true;
-    }catch{}
-  }
-
-  // 3) Último recurso: GET “silencioso” (nunca abre Apps Script)
-  if(!ok){
-    try{
-      const u = `${TRACK_URL}?id=${encodeURIComponent(id)}&src=${encodeURIComponent("go_fallback")}`;
-      fetch(u, { method: "GET", mode: "no-cors", keepalive: true });
-    }catch{}
-  }
-
-  // Redirección al PBI después de registrar
-  const base = "https://app.powerbi.com/view?r=";
-  const entry = Object.entries(NAMES).find(([key]) => key === id);
-  const dest = TARGETS?.[id] || ""; // si defines TARGETS, úsalo, o concatenar manualmente
-  setTimeout(() => location.replace(dest), 120);
+  // Redirección ÚNICA: el Worker registra y devuelve 302 al destino final (PBI)
+  const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=${encodeURIComponent(src)}`;
+  // pequeño delay para que el usuario lea el nombre
+  setTimeout(() => location.replace(url), 80);
 })();
 </script>
 </body>
