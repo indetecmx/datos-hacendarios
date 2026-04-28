@@ -76,7 +76,7 @@
 /* ====== CONFIGURACIÓN ====== */
 
 /** URL base de tu Cloudflare Worker (reemplaza) **/
-const WORKER_BASE = "https://TU-WORKER.workers.dev";
+const WORKER_BASE = "https://indetec-tracker.cdhindetec.workers.dev";
 
 /** Catálogo (id → nombre) — sin URLs aquí **/
 const REPORTS = {
@@ -240,7 +240,6 @@ function openReport(id){
   });
   // Redirección única al PBI (sin intermedios)
   window.location.href = target;
- }, 120);
   return false;
 }
 
