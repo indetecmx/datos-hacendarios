@@ -91,9 +91,9 @@ const NAMES = {
   m.textContent = name;
 
   // Redirección ÚNICA: el Worker registra y devuelve 302 al destino final (PBI)
-  const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=${encodeURIComponent(src)}`;
+  const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=${encodeURIComponent(src)}&ts=${Date.now()}`;
   // pequeño delay para que el usuario lea el nombre
-  setTimeout(() => location.replace(url), 80);
+  setTimeout(() => location.replace(url);
 })();
 </script>
 </body>
