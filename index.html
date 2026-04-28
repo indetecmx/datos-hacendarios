@@ -142,21 +142,21 @@ let grouped=true, showIds=false;
 
 function categorize(id,name){
   const t=(id+" "+name).toLowerCase();
-  if(/^pe_/.test(id)) return "Presupuesto de Egresos (PE)";
-  if(t.includes("efipem")) return "EFIPEM";
-  if(t.includes("leyes")) return "Leyes de Ingresos";
-  if(t.includes("balance")) return "Balances";
-  if(["pronosticos","impuestos_potenciales","predial_potencial"].includes(id)) return "Modelos y Potenciales";
-  if(["mapas","mapas_personal"].includes(id)) return "Mapas";
-  if(id.startsWith("mapas_")) return "Mapas por estado";
-  if(["indicadores","panorama_hacienda"].includes(id)) return "Indicadores y Panorama";
-  if(["deuda","deuda_municipal"].includes(id)) return "Deuda";
-  if(id==="municipal") return "Municipal";
-  if(id==="ambientales") return "Ambientales";
-  if(id==="derechos_agua") return "Ingresos y Derechos";
-  if(id==="censos_eco24")  return "Censos Económicos";
-  return "Otros";
+  if(id.startsWith("presupuesto_egresos")||/^pe_/.test(id))return"Presupuesto de Egresos (PE)";
+  if(t.includes("efipem"))return"EFIPEM";
+  if(t.includes("leyes"))return"Leyes de Ingresos";
+  if(["pronosticos","impuestos_potenciales","predial_potencial"].includes(id))return"Modelos y Potenciales";
+  if(["derechos_agua","impuestos_vig","estado_analitico","proyecciones","resultados"].includes(id))return"Ingresos y Derechos";
+  if(["cp_estatales","cp_municipales"].includes(id))return"Cuentas Públicas";
+  if(id==="deuda_mun")return"Deuda";
+  if(["indicadores","panorama_hacienda"].includes(id))return"Indicadores y Panorama";
+  if(id==="censos_eco")return"Censos Económicos";
+  if(id==="denue")return"Actividad Económica (DENUE)";
+  if(id==="ambiental")return"Ambientales";
+  if(id==="publicaciones")return"Publicaciones";
+  return"Otros";
 }
+
 function esc(s){ return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 function showToast(msg){
