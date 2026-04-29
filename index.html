@@ -3,53 +3,61 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>INDETEC · Datos Hacendarios · Reportes PBI</title>
-<meta name="color-scheme" content="light dark">
-
-<link rel="dns-prefetch" href="https://app.powerbi.com">
-<link rel="preconnect" href="https://app.powerbi.com" crossorigin>
+<title>INDETEC · Reportes PBI</title>
 
 <style>
-:root{--bg:#fff;--fg:#111;--muted:#667;--card:#f6f7fb;--border:#e6e8ef;--accent:#2f6fed}
-@media (prefers-color-scheme:dark){
-:root{--bg:#0b0d12;--fg:#eaeef8;--muted:#98a0b3;--card:#121621;--border:#22283a;--accent:#6aa7ff}
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui}
-header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--border)}
-.wrap{max-width:1100px;margin:0 auto;padding:16px}
-.toolbar{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-top:12px}
-input[type=search]{padding:10px;border:1px solid var(--border);border-radius:10px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
-.title{margin:0;font-size:1rem}
-.tag{font-size:.75rem;padding:2px 8px;border:1px solid var(--border);border-radius:999px}
-.actions{display:flex;gap:8px;margin-top:auto}
-a.btn-link{flex:1;text-align:center;text-decoration:none;border:1px solid var(--border);border-radius:10px;padding:9px}
-.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  body{
+    font-family: system-ui, Arial;
+    margin:0;
+    background:#0b0d12;
+    color:#eaeef8;
+  }
+
+  header{
+    padding:20px;
+    border-bottom:1px solid #222;
+  }
+
+  h1{
+    margin:0;
+    font-size:18px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:12px;
+    padding:20px;
+  }
+
+  button{
+    padding:14px;
+    border:1px solid #2a2f3a;
+    border-radius:10px;
+    background:#121621;
+    color:white;
+    cursor:pointer;
+    text-align:left;
+    transition:.2s;
+  }
+
+  button:hover{
+    background:#1b2130;
+    border-color:#3a72ff;
+  }
 </style>
 </head>
 
 <body>
 
 <header>
-<div class="wrap">
-<h1>Datos Hacendarios · Reportes Power BI</h1>
-
-<div class="toolbar">
-<input id="q" type="search" placeholder="Buscar...">
-</div>
-</div>
+  <h1>Datos Hacendarios · Reportes Power BI</h1>
 </header>
 
-<main class="wrap">
 <div id="grid" class="grid"></div>
-</main>
 
 <script>
-const WORKER_BASE = "https://indetec-tracker.cdhindetec.workers.dev";
+const WORKER_BASE = "https://TU-WORKER.workers.dev";
 
 /* ================= REPORTES ================= */
 const REPORTS = {
@@ -82,44 +90,18 @@ function render(){
   const grid = document.getElementById("grid");
 
   grid.innerHTML = Object.keys(REPORTS).map(id => `
-    <div class="card">
-      <h3 class="title">${REPORTS[id]}</h3>
-      <div class="tag">PBI</div>
-
-      <div class="actions">
-        <a class="btn-link primary"
-           href="#"
-           onclick="openReport(event, '${id}')">
-          Abrir
-        </a>
-      </div>
-    </div>
+    <button onclick="openReport('${id}')">
+      ${REPORTS[id]}
+    </button>
   `).join("");
 }
 
-/* ================= TRACKING VIA WORKER ================= */
-function openReport(e, id){
-
-  e.preventDefault(); // 🔥 correcto (ya no usamos event global)
-
-  const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=index`;
-
-  // redirección limpia
-  window.location.href = url;
-
-  return false;
+/* ================= REDIRECCIÓN ================= */
+function openReport(id){
+  window.location.href =
+    `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=index`;
 }
 
-/* ================= BUSCADOR ================= */
-document.getElementById("q").addEventListener("input", (e) => {
-  const val = e.target.value.toLowerCase();
-
-  document.querySelectorAll(".card").forEach(card => {
-    card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
-  });
-});
-
-/* ================= INIT ================= */
 render();
 </script>
 
