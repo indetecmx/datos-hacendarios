@@ -6,7 +6,6 @@
 <title>INDETEC · Apertura de reporte</title>
 <meta name="color-scheme" content="light dark">
 
-<!-- Preconexiones (solo a Power BI; quitamos Apps Script) -->
 <link rel="dns-prefetch" href="https://app.powerbi.com">
 <link rel="preconnect" href="https://app.powerbi.com" crossorigin>
 
@@ -18,13 +17,18 @@
   *{box-sizing:border-box}
   body{
     margin:0; padding:40px; background:var(--bg); color:var(--fg);
-    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; text-align:center;
+    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    text-align:center;
   }
   h1{font-size:1.25rem;margin:0 0 6px}
   .meta{color:var(--muted);font-size:.95rem}
   .loader{
-    border:4px solid rgba(0,0,0,.15); border-top:4px solid var(--accent);
-    border-radius:50%; width:40px; height:40px; margin:18px auto; animation:spin 1s linear infinite;
+    border:4px solid rgba(0,0,0,.15);
+    border-top:4px solid var(--accent);
+    border-radius:50%;
+    width:40px;height:40px;
+    margin:18px auto;
+    animation:spin 1s linear infinite;
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -33,48 +37,54 @@
 <body>
   <h1 id="t">Abriendo reporte…</h1>
   <p id="m" class="meta">Preparando redirección segura</p>
-  <div class="loader" role="progressbar" aria-label="Cargando"></div>
+  <div class="loader" role="progressbar"></div>
 
 <script>
-/* ========= 1) Cloudflare Worker =========
-   Reemplaza por tu endpoint: https://TU-WORKER.workers.dev
-   El Worker expone:
-   - GET  /go?id=...    -> registra y hace 302 directo al PBI (único salto)
-   - POST /log          -> (opcional) para beacons si quisieras
-*/
-const WORKER_BASE = "https://TU-WORKER.workers.dev";
 
-/* ========= 2) Catálogo de nombres (solo para mostrar) ========= */
+/* =========================
+   🔥 CONFIG
+========================= */
+const WORKER_BASE = "https://indetec-tracker.cdhindetec.workers.dev";
+
+/* =========================
+   🔥 NOMBRES SOLO UI
+========================= */
 const NAMES = {
   pronosticos:'Pronósticos',
   impuestos_potenciales:'Impuestos potenciales',
-  predial_potencial:'Impuesto predial potencial',
-  efipem_ingresos: 'Estadísticas de finanzas públicas municipales y estatales (EFIPEM): Ingresos',
+  predial_potencial:'Predial potencial',
+  efipem_ingresos:'EFIPEM ingresos',
   leyes_ingresos:'Leyes de ingresos',
   leyes_impuestos:'Leyes de impuestos',
-  impuestos_vig: 'Impuestos vigentes',
+  impuestos_vig:'Impuestos vigentes',
   derechos_agua:'Derechos de agua',
-  efipem_egresos:'Estadísticas de finanzas públicas municipales y estatales (EFIPEM): egresos',
-  presupuesto_egresos:'Presupuesto de egresos',
-  presupuesto_egresos_cap: 'Presupuesto de egresos por capitulo',
-  estado_analitico: 'Estado analitico de ingresos detallado',
-  proyecciones:'Proyecciones de ingresos',
-  resultados: 'Resultados de ingresos',
-  panorama_hacienda:'Panorama de hacienda pública',
-  cp_estatales: 'Cuentas públicas estatales',
-  cp_municipales:'Cuentas públicas municipales',
+  efipem_egresos:'EFIPEM egresos',
+  presupuesto_egresos:'Presupuesto egresos',
+  estado_analitico:'Estado analítico',
+  proyecciones:'Proyecciones',
+  resultados:'Resultados',
+  panorama_hacienda:'Panorama hacienda',
+  cp_estatales:'Cuentas estatales',
+  cp_municipales:'Cuentas municipales',
   deuda_mun:'Deuda municipal',
   ambiental:'Medio ambiente',
-  indicadores: 'Indicadores económicos',
-  censos_eco: 'Censos económicos',
+  indicadores:'Indicadores',
+  censos_eco:'Censos económicos',
   denue:'DENUE',
   publicaciones:'Publicaciones'
 };
 
-/* ========= 3) Redirección única vía Worker ========= */
+/* =========================
+   🔥 MAIN LOGIC
+========================= */
 (function(){
-  const qs  = new URLSearchParams(location.search);
-  const id  = (qs.get("id") || qs.get("r") || "").trim();
+
+  const qs = new URLSearchParams(location.search);
+
+  // SOLO id (evita r conflictivo)
+  const id = (qs.get("id") || "").trim();
+
+  // src limpio (si no viene, lo controlamos)
   const src = (qs.get("src") || "go_html").trim();
 
   const t = document.getElementById("t");
@@ -82,19 +92,25 @@ const NAMES = {
 
   if(!id){
     t.textContent = "ID faltante o inválido";
-    m.textContent = "Ejemplo: ?id=mapas_JAL";
+    m.textContent = "Ejemplo: ?id=publicaciones";
     return;
   }
 
   const name = NAMES[id] || id;
+
   t.textContent = "Abriendo reporte…";
   m.textContent = name;
 
-  // Redirección ÚNICA: el Worker registra y devuelve 302 al destino final (PBI)
-  const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=${encodeURIComponent(src)}&ts=${Date.now()}`;
-  // pequeño delay para que el usuario lea el nombre
-  setTimeout(() => location.replace(url);
+  // 🔥 URL FINAL CONTROLADA
+  const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=${encodeURIComponent(src)}`;
+
+  // 🔥 pequeño delay UX
+  setTimeout(() => {
+    location.replace(url);
+  }, 80);
+
 })();
+
 </script>
 </body>
 </html>
