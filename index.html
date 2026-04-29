@@ -20,7 +20,6 @@ header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--
 .wrap{max-width:1100px;margin:0 auto;padding:16px}
 .toolbar{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-top:12px}
 input[type=search]{padding:10px;border:1px solid var(--border);border-radius:10px}
-.btn{padding:10px;border:1px solid var(--border);border-radius:10px;cursor:pointer}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}}
@@ -78,55 +77,6 @@ const REPORTS = {
   publicaciones:"Publicaciones"
 };
 
-/* ================= TARGETS ================= */
-const TARGETS = {
-pronosticos:"https://app.powerbi.com/view?r=eyJrIjoiZTI0NzE1ODMtNzQ1Ni00MjA1LWFiMDEtMTRlYmY5MzU1ODAzIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  impuestos_potenciales:"https://app.powerbi.com/view?r=eyJrIjoiNjQwZWFmYmQtZGViNS00ZWNhLWJmZTYtYWVhZGY4NGQ0NTE5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSectionbc92482a221c92453c0d",
-
-  predial_potencial:"https://app.powerbi.com/view?r=eyJrIjoiODkyYTUyMzMtNGQ2Yy00ZTBkLTlkNGYtYjM1MDA0MmEyNjI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  efipem_ingresos:"https://app.powerbi.com/view?r=eyJrIjoiYjdiYzkzNzgtMDJlOS00NTIyLTgzNGEtZTQ2YzZhOTI4ZGZlIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  leyes_ingresos:"https://app.powerbi.com/view?r=eyJrIjoiNTlmZGZiYmQtMzYzNC00MzI0LTgzNTItZmU5NmFjMjU4MjAxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
-
-  leyes_impuestos:"https://app.powerbi.com/view?r=eyJrIjoiNDdlZGRlNDAtZGNlNC00NDBiLTk0YmQtYTBhMjUwM2NkOWMwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9&pageName=ReportSection3b90823ea5fa0795f306",
-
-  impuestos_vig:"https://indetec1-my.sharepoint.com/:x:/g/personal/mdelatorrec_indetec1_onmicrosoft_com/IQDZrxthkHA1SJ6SbDzu1jCdAZococVYsJJQD4Mwpav06F8?rtime=nYkfJOyT3kg",
-
-  derechos_agua:"https://app.powerbi.com/view?r=eyJrIjoiYzUyMjU1YjUtZDdjNy00MTQxLWE2NzgtN2MxNWJkZGRhZGMyIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  efipem_egresos:"https://app.powerbi.com/view?r=eyJrIjoiNzg1MWNhM2UtNDFhNy00YzUyLWExZDEtMjkxMWRiNDE5MTEwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  presupuesto_egresos:"https://app.powerbi.com/view?r=eyJrIjoiNGJkYjJjNDItNjdjYS00YTg3LWE3YjUtZDMzYjUwZTMxNzlmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  presupuesto_egresos_cap:"https://app.powerbi.com/view?r=eyJrIjoiMTk3YzZmMmQtZDA2OC00YTBlLWIwNWEtOWMwMWM2NTNjZWJhIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  estado_analitico:"https://app.powerbi.com/view?r=eyJrIjoiNWNjNmQ4YWMtNjNhMi00OTg1LWE4MDUtM2QwNThjZGU5MDI3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  proyecciones:"https://app.powerbi.com/view?r=eyJrIjoiNGZkZmM5OGItNDljYi00MDExLWFlZTctNTMxZjRiZjEwMTVkIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  resultados:"https://app.powerbi.com/view?r=eyJrIjoiZWMzNjhlNzItZjFiZi00MGMwLWJmNzQtMjE1MDE1NWYwMDJiIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  panorama_hacienda:"https://app.powerbi.com/view?r=eyJrIjoiYzczZWEwNWItNWNjNC00M2UyLTkyN2YtYTVkODE4NDczNjczIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  cp_estatales:"https://app.powerbi.com/view?r=eyJrIjoiZjkzYmJkZWYtNTZkZi00NzMxLTkyMjItMjc2ZGRjMTVjMGQxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  cp_municipales:"https://app.powerbi.com/view?r=eyJrIjoiMmZjZGZmN2QtOWFjMS00OTM4LWFhNTAtMDc1OWI2Mzg0NDVmIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  deuda_mun:"https://app.powerbi.com/view?r=eyJrIjoiNWI3NmRiZjYtMzczMy00M2Q4LWE2YjctNDBiMmZmOWFjNDgwIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  ambiental:"https://app.powerbi.com/view?r=eyJrIjoiODFkYjFkNWItMzg5Zi00YjA3LTlkMTUtMGE5NTI5MzUxNmE3IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  indicadores:"https://app.powerbi.com/view?r=eyJrIjoiNzEzMGFlNzYtZDhkMS00ODhkLWJiMTEtMGU5YmFhYmUwNDA2IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  censos_eco:"https://app.powerbi.com/view?r=eyJrIjoiZDJkODBkZWUtNmE3MC00NDdjLWFkOTUtZGY2MDZlNGI0NTdjIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  denue:"https://app.powerbi.com/view?r=eyJrIjoiNjY3YTY4ZjItZjY0Mi00OWFiLWJlZmMtNmI0M2E4YjE4MGI5IiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9",
-
-  publicaciones:"https://app.powerbi.com/view?r=eyJrIjoiYjlmZDZhM2MtYzJlMS00NjExLTk0ZWEtZjg3MWJiMzM5NGYxIiwidCI6IjRhZjM1NGU0LTM0Y2MtNGM0Yy1hY2MwLTIyMmZkMDU1NTZiNiJ9"
-};
-
 /* ================= RENDER ================= */
 function render(){
   const grid = document.getElementById("grid");
@@ -139,7 +89,7 @@ function render(){
       <div class="actions">
         <a class="btn-link primary"
            href="#"
-           onclick="openReport('${id}'); return false;">
+           onclick="openReport(event, '${id}')">
           Abrir
         </a>
       </div>
@@ -147,35 +97,27 @@ function render(){
   `).join("");
 }
 
+/* ================= TRACKING VIA WORKER ================= */
+function openReport(e, id){
 
-/* ================= TRACKING REAL ================= */
-/* TODO pasa por el Worker /go (única fuente de verdad) */
-function openReport(id){
+  e.preventDefault(); // 🔥 correcto (ya no usamos event global)
 
-  // 🔥 Redirección controlada por Worker
-  const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=github`;
+  const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=index`;
 
-  // ❌ IMPORTANTE: eliminado sendBeacon (/log)
-  // antes esto rompía:
-  // - kind (te salía "beacon")
-  // - r (te salía "LINK")
-  // - src (no llegaba o se sobrescribía)
-
+  // redirección limpia
   window.location.href = url;
+
   return false;
 }
-
 
 /* ================= BUSCADOR ================= */
 document.getElementById("q").addEventListener("input", (e) => {
   const val = e.target.value.toLowerCase();
 
   document.querySelectorAll(".card").forEach(card => {
-    const match = card.innerText.toLowerCase().includes(val);
-    card.style.display = match ? "" : "none";
+    card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
   });
 });
-
 
 /* ================= INIT ================= */
 render();
