@@ -130,42 +130,54 @@ pronosticos:"https://app.powerbi.com/view?r=eyJrIjoiZTI0NzE1ODMtNzQ1Ni00MjA1LWFi
 /* ================= RENDER ================= */
 function render(){
   const grid = document.getElementById("grid");
+
   grid.innerHTML = Object.keys(REPORTS).map(id => `
     <div class="card">
       <h3 class="title">${REPORTS[id]}</h3>
       <div class="tag">PBI</div>
+
       <div class="actions">
-        <a class="btn-link primary" href="#" onclick="openReport('${id}')">Abrir</a>
+        <a class="btn-link primary"
+           href="#"
+           onclick="openReport('${id}'); return false;">
+          Abrir
+        </a>
       </div>
     </div>
   `).join("");
 }
 
+
 /* ================= TRACKING REAL ================= */
-/* SOLO manda al worker /go (NO directo a Power BI) */
+/* TODO pasa por el Worker /go (única fuente de verdad) */
 function openReport(id){
 
+  // 🔥 Redirección controlada por Worker
   const url = `${WORKER_BASE}/go?id=${encodeURIComponent(id)}&src=github`;
 
-  // opcional: log ligero (no necesario realmente)
-  try {
-    navigator.sendBeacon?.(WORKER_BASE + "/log", JSON.stringify({
-      id,
-      ts: Date.now()
-    }));
-  } catch {}
+  // ❌ IMPORTANTE: eliminado sendBeacon (/log)
+  // antes esto rompía:
+  // - kind (te salía "beacon")
+  // - r (te salía "LINK")
+  // - src (no llegaba o se sobrescribía)
 
-  window.location.href = url; // 🔥 clave: pasa por Worker
+  window.location.href = url;
   return false;
 }
 
-document.getElementById("q").addEventListener("input", e=>{
+
+/* ================= BUSCADOR ================= */
+document.getElementById("q").addEventListener("input", (e) => {
   const val = e.target.value.toLowerCase();
-  document.querySelectorAll(".card").forEach(card=>{
-    card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
+
+  document.querySelectorAll(".card").forEach(card => {
+    const match = card.innerText.toLowerCase().includes(val);
+    card.style.display = match ? "" : "none";
   });
 });
 
+
+/* ================= INIT ================= */
 render();
 </script>
 
